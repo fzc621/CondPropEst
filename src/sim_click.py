@@ -56,8 +56,6 @@ if __name__ == '__main__':
                 for rk, sr in enumerate(docs, start=1):
                     doc_id, _, rel = sr
                     pr = cal_prob(w, feat, rk)
-                    if i == 0 and rk == 3:
-                        print(pr)
                     clicked = False
                     if prob_test(pr):
                         if rel:
