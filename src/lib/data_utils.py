@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 
 def load_query(path):
     queries = []
@@ -15,6 +16,17 @@ def load_query(path):
                 queries[-1].append((rel, toks[2]))
     return queries
 
+def load_feat(path):
+    queries = []
+    with open(path, 'r') as fin:
+        for line_ in fin:
+            line = line_.strip()
+            toks = line.split(' ')
+            qid = int(toks[0].split(':')[1])
+            feat = np.asarray([float(tok.split(':')[1]) for tok in toks[1:]])
+            queries.append(Query(qid, feat=feat))
+    return queries
+    
 def load_log(path):
     logs = []
     with open(path, 'r') as fin:
@@ -48,13 +60,12 @@ def dump_feat(queries, path):
 
 class Query(object):
 
-    def __init__(self, qid, feat=None, doc=None):
+    def __init__(self, qid, doc=None, feat=None):
         self._qid = qid
         self._feat = feat
-        if doc is None:
-            self._docs = []
-        else:
-            self._docs = [doc]
+        self._docs = []
+        if not doc is None:
+            self._docs.append(doc)
 
     def append(self, doc):
         self._docs.append(doc)
