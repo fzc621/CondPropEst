@@ -25,7 +25,7 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     filenames = [filename for filename in os.listdir(args.input_dir)
-                    if filename.endswith('.txt')]
+                    if filename.endswith('.txt') and not filename.endswith('feat.txt')]
 
     makedirs(args.output_dir)
     for filename in filenames:
