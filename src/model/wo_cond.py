@@ -57,51 +57,34 @@ if __name__ == '__main__':
     n1 = len(log1)
     assert n0 == n1
     w = Counter()
-    for q in log0:
-        qid = q._qid
-        docs = q._docs
-        for rk, doc in enumerate(docs, start=1):
-            if rk > M:
-                break
-            doc_id, _ = doc
-            w.update({(qid, doc_id, rk):n0})
-    for q in log1:
-        qid = q._qid
-        docs = q._docs
-        for rk, doc in enumerate(docs, start=1):
-            if rk > M:
-                break
-            doc_id, _ = doc
-            w.update({(qid, doc_id, rk):n1})
+    for i in range(2):
+        logger = eval('log{}'.format(i))
+        for q in logger:
+            qid = q._qid
+            docs = q._docs
+            for rk, doc in enumerate(docs, start=1):
+                if rk > M:
+                    break
+                doc_id, _ = doc
+                w.update({(qid, doc_id, rk):eval('n{}'.format(i))})
 
     c = Counter()
     not_c = Counter()
-    for q in log0:
-        qid = q._qid
-        docs = q._docs
-        for rk, doc in enumerate(docs, start=1):
-            if rk > M:
-                break
-            doc_id, delta = doc
-            v = delta / w[(qid, doc_id, rk)]
-            v_ = (1 - delta) / w[(qid, doc_id, rk)]
-            for rk_ in range(1, M + 1):
-                if (qid, doc_id) in S[(rk, rk_)]:
-                    c.update({(rk, rk_): v})
-                    not_c.update({(rk, rk_): v_})
-    for q in log1:
-        qid = q._qid
-        docs = q._docs
-        for rk, doc in enumerate(docs, start=1):
-            if rk > M:
-                break
-            doc_id, delta = doc
-            v = delta / w[(qid, doc_id, rk)]
-            v_ = (1 - delta) / w[(qid, doc_id, rk)]
-            for rk_ in range(1, M + 1):
-                if (qid, doc_id) in S[(rk, rk_)]:
-                    c.update({(rk, rk_): v})
-                    not_c.update({(rk, rk_): v_})
+    for i in range(2):
+        logger = eval('log{}'.format(i))
+        for q in logger:
+            qid = q._qid
+            docs = q._docs
+            for rk, doc in enumerate(docs, start=1):
+                if rk > M:
+                    break
+                doc_id, delta = doc
+                v = delta / w[(qid, doc_id, rk)]
+                v_ = (1 - delta) / w[(qid, doc_id, rk)]
+                for rk_ in range(1, M + 1):
+                    if (qid, doc_id) in S[(rk, rk_)]:
+                        c.update({(rk, rk_): v})
+                        not_c.update({(rk, rk_): v_})
 
     def p_idx(k):
         return (k - 1) * M + k - 1
