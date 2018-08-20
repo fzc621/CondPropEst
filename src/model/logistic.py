@@ -3,6 +3,7 @@
 import os
 import sys
 import math
+import copy
 import random
 import timeit
 import argparse
@@ -12,13 +13,64 @@ from ..lib.data_utils import Query, load_log, load_feat
 from ..lib.utils import makedirs
 from collections import defaultdict, Counter
 
+def h(theta, k, feat):
+    feat_ = np.append(feat, k)
+    prod = np.dot(theta, feat_)
+    return 1 / (1 + np.exp(-prod))
 
+def data_iterator(data, batch_size, shuffle=True):
+    idx = range(len(data))
+    if shuffle:
+        random.shuffle(data)
+
+    for start_idx in range(0, len(data), batch_size):
+        end_idx = min(start_idx + batch_size, len(data))
+        print('Batch [{}, {}]'.format(start_idx, end_idx))
+        yield data[start_idx: end_idx]
+
+def train(M, c, not_c, data_, batch_size):
+    data = copy.deepcopy(data_)
+    def r_idx(k, k_):
+        assert k != k_
+        if k < k_:
+            return (k - 1) * M + k_ - 1
+        else:
+            return (k_ - 1) * M + k - 1
+
+
+    a, b = 1e-4, 1-1e-4
+    x0 = np.array([random.random() * (b - a) + a] * (M * M + D))
+    bnds = [(a, b)] * (M * M) + [(None, None)] * D
+
+    for batch_queries in data_iterator(data, batch_size):
+        def likelihood(x):
+            theta = x[M * M:]
+            r = 0
+            for q in batch_queries:
+                qid = q._qid
+                feat = q._feat
+                for k in range(1, M + 1):
+                    for k_ in range(1, M + 1):
+                        if k != k_:
+                            r += c[(k, k_, qid)] * math.log(h(theta, k, feat) * x[r_idx(k, k_)])
+                            r += not_c[(k, k_, qid)] * math.log(1 - h(theta, k, feat) * x[r_idx(k, k_)])
+            return -r
+
+        ret = opt.minimize(likelihood, x0, method='L-BFGS-B', bounds=bnds)
+        x0 = ret.x
+
+    theta_ = ret.x[M * M:]
+    return theta_
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-            description='propensity estimation w/o condition')
+        description='propensity estimation w/o condition')
     parser.add_argument('-n', default=10, type=int,
         help='number of top positions for which estimates are desired')
+    parser.add_argument('-d', default=10, type=int,
+        help='dimension of feature')
+    parser.add_argument('-s', default=128, type=int,
+        help='batch size')
     parser.add_argument('feat_path', help='feature path')
     parser.add_argument('log_dir', help='click log dir')
     parser.add_argument('output_dir', help='model output directory')
@@ -27,6 +79,7 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     M = args.n
+    D = args.d + 1
     log0_path = os.path.join(args.log_dir, 'log0.txt')
     log1_path = os.path.join(args.log_dir, 'log1.txt')
     log0 = load_log(log0_path)
@@ -83,46 +136,26 @@ if __name__ == '__main__':
                 v_ = (1 - delta) / w[(qid, doc_id, rk)]
                 for rk_ in range(1, M + 1):
                     if (qid, doc_id) in S[(rk, rk_)]:
-                        c.update({(rk, rk_): v})
-                        not_c.update({(rk, rk_): v_})
-
-    def p_idx(k):
-        return (k - 1) * M + k - 1
-
-    def r_idx(k, k_):
-        assert k != k_
-        if k < k_:
-            return (k - 1) * M + k_ - 1
-        else:
-            return (k_ - 1) * M + k - 1
-
-    def likelihood(x):
-        r = 0
-        for k in range(1, M + 1):
-            for k_ in range(1, M + 1):
-                if k != k_:
-                    r += c[(k, k_)] * math.log(x[p_idx(k)] * x[r_idx(k, k_)])
-                    r += not_c[(k, k_)] * math.log(1 - x[p_idx(k)] * x[r_idx(k, k_)])
-        return -r
-
-    a, b = 1e-4, 1-1e-4
-    x0 = np.array([random.random() * (b - a) + a] * (M * M))
-    bnds = np.array([(a, b)] * (M * M))
-
-    ret = opt.minimize(likelihood, x0, method='L-BFGS-B', bounds=bnds)
-    xm = ret.x
-    prop_ = [str(xm[p_idx(k)] / xm[p_idx(1)]) for k in range(1, M + 1)]
+                        c.update({(rk, rk_, qid): v})
+                        not_c.update({(rk, rk_, qid): v_})
 
     feat_queries = load_feat(args.feat_path)
+    theta_ = train(M, c, not_c, feat_queries[:128], args.s)
+
     makedirs(args.output_dir)
     model_para_path = os.path.join(args.output_dir, 'para.dat')
     with open(model_para_path, 'w') as fout:
-        fout.write(' '.join(prop_))
+        str_theta = list(map(lambda x: str(x), theta_))
+        fout.write(' '.join(str_theta))
 
     est_path = os.path.join(args.output_dir, 'est.txt')
     with open(est_path, 'w') as fout:
         for query in feat_queries:
-            fout.write('qid:{} {}\n'.format(query._qid, ' '.join(prop_)))
+            feat = query._feat
+            qid = query._qid
+            h1 = h(theta_, 1, feat)
+            prop_ = [str(h(theta_, k, feat) / h1) for k in range(1, M + 1)]
+            fout.write('qid:{} {}\n'.format(qid, ' '.join(prop_)))
 
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
