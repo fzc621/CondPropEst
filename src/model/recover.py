@@ -14,10 +14,10 @@ from ..lib.utils import makedirs
 from ..lib.train_utils import train_nonlinear
 from collections import defaultdict, Counter
 
+
 def h(theta, k, feat):
-    feat_ = np.append(feat, k)
-    prod = np.dot(theta, feat_)
-    return 1 / (1 + np.exp(-prod))
+    prod = np.dot(theta, feat)
+    return 1 / pow(k, prod)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     M = args.n
-    D = args.d + 1
+    D = args.d
     log0_path = os.path.join(args.log_dir, 'log0.txt')
     log1_path = os.path.join(args.log_dir, 'log1.txt')
     log0 = load_log(log0_path)
@@ -110,8 +110,7 @@ if __name__ == '__main__':
         for query in feat_queries:
             feat = query._feat
             qid = query._qid
-            h1 = h(theta_, 1, feat)
-            prop_ = [str(h(theta_, k, feat) / h1) for k in range(1, M + 1)]
+            prop_ = [str(h(theta_, k, feat)) for k in range(1, M + 1)]
             fout.write('qid:{} {}\n'.format(qid, ' '.join(prop_)))
 
     end = timeit.default_timer()

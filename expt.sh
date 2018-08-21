@@ -27,9 +27,24 @@ res_dir="${expt_dir}/result"
 # === w/o cond ===
 # model_dir="${res_dir}/wo_cond"
 # python -m src.model.wo_cond -n 10 "${DATA_DIR}/set1bin.train.feat.txt" \
-#   ${log_dir} "${model_dir}"
+#   ${log_dir} ${model_dir}
 
 # === w/ cond logistic ===
-model_dir="${res_dir}/logistic"
-python -m src.model.logistic -n 10 -d 10 "${DATA_DIR}/set1bin.train.feat.txt" \
-  ${log_dir} "${model_dir}"
+# model_dir="${res_dir}/logistic"
+# python -m src.model.logistic -n 10 -d 10 "${DATA_DIR}/set1bin.train.feat.txt" \
+#   ${log_dir} ${model_dir}
+
+# === w/ cond recover ===
+model_dir="${res_dir}/recover"
+python -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' \
+  ${log_dir} ${model_dir}
+
+# === w/ cond recover ===
+model_dir="${res_dir}/recover_128"
+python -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' \
+  ${log_dir} ${model_dir}
+
+# === w/ cond recover ===
+model_dir="${res_dir}/recover_512"
+python -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' \
+  ${log_dir} ${model_dir}
