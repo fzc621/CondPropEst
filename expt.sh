@@ -2,7 +2,7 @@ set -e
 
 DATASET_DIR='../../dataset/set1bin'
 DATA_DIR='data/set1bin/input'
-
+PYTHON_PATH='/home/ys756/anaconda3/envs/fzc/bin/python'
 svm_dir="../svm_rank"
 svm_learn="${svm_dir}/svm_rank_learn"
 svm_classify="${svm_dir}/svm_rank_classify"
@@ -36,15 +36,27 @@ res_dir="${expt_dir}/result"
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover"
-python -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' \
-  ${log_dir} ${model_dir}
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
+else
+  python -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' \
+    ${log_dir} ${model_dir}
+fi
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover_128"
-python -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' \
-  ${log_dir} ${model_dir}
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
+else
+  python -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' \
+    ${log_dir} ${model_dir}
+fi
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover_512"
-python -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' \
-  ${log_dir} ${model_dir}
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
+else
+  python -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' \
+    ${log_dir} ${model_dir}
+fi
