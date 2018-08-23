@@ -24,3 +24,8 @@ def read_para(path):
 def cal_prob(w, x, r):
     eta = np.dot(w, x)
     return pow(1 / r, eta)
+
+def likelihood(p, r, c, not_c, M):
+    pr = np.repeat(p, M).reshape([M, M]) * r
+    obj = np.sum(c * np.log10(pr) + not_c * np.log10(1 - pr))
+    return obj

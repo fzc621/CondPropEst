@@ -13,7 +13,15 @@ res_dir="${expt_dir}/result"
 # python -m src.sample_slice "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
 # python -m src.sim_feat $DATA_DIR $DATA_DIR
 
-# python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" "${expt_dir}/set1bin.train.prop.txt"
+# ground_truth_dir="${res_dir}/gt"
+# python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
+#   "${ground_truth_dir}/set1bin.train.prop.txt"
+# python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.valid.feat.txt" \
+#   "${ground_truth_dir}/set1bin.valid.prop.txt"
+# python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.test.feat.txt" \
+#   "${ground_truth_dir}/set1bin.test.prop.txt"
+
+
 # for i in 0 1;
 # do
 #   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
@@ -25,9 +33,9 @@ res_dir="${expt_dir}/result"
 # done
 
 # === w/o cond ===
-# model_dir="${res_dir}/wo_cond"
-# python -m src.model.wo_cond -n 10 "${DATA_DIR}/set1bin.train.feat.txt" \
-#   ${log_dir} ${model_dir}
+model_dir="${res_dir}/wo_cond"
+python -m src.model.wo_cond -n 10 "${DATA_DIR}/set1bin.train.feat.txt" \
+  ${log_dir} ${model_dir}
 
 # === w/ cond logistic ===
 # model_dir="${res_dir}/logistic"
@@ -35,28 +43,10 @@ res_dir="${expt_dir}/result"
 #   ${log_dir} ${model_dir}
 
 # === w/ cond recover ===
-model_dir="${res_dir}/recover"
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
-else
-  python -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' \
-    ${log_dir} ${model_dir}
-fi
-
-# === w/ cond recover ===
-model_dir="${res_dir}/recover_128"
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
-else
-  python -m src.model.recover -n 10 -d 10 -s 128 '${DATA_DIR}/set1bin.train.feat.txt' \
-    ${log_dir} ${model_dir}
-fi
-
-# === w/ cond recover ===
-model_dir="${res_dir}/recover_512"
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
-else
-  python -m src.model.recover -n 10 -d 10 -s 512 '${DATA_DIR}/set1bin.train.feat.txt' \
-    ${log_dir} ${model_dir}
-fi
+# model_dir="${res_dir}/recover"
+# if [[ "$OSTYPE" == "linux-gnu" ]]; then
+#   ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' ${log_dir} ${model_dir}"
+# else
+#   python -m src.model.recover -n 10 -d 10 '${DATA_DIR}/set1bin.train.feat.txt' \
+#     ${log_dir} ${model_dir}
+# fi

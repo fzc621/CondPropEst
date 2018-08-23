@@ -14,7 +14,7 @@ def data_iterator(data, batch_size, shuffle=True):
         print('Batch [{}, {}]'.format(start_idx, end_idx))
         yield data[start_idx: end_idx]
 
-def train_nonlinear(M, c, not_c, data_, batch_size, D, h):
+def train_nonlinear(M, c, not_c, data_, D, h):
     data = copy.deepcopy(data_)
     def r_idx(k, k_):
         assert k != k_
@@ -28,22 +28,21 @@ def train_nonlinear(M, c, not_c, data_, batch_size, D, h):
     x0 = np.array([random.random() * (b - a) + a] * (M * M + D))
     bnds = [(a, b)] * (M * M + D)
 
-    for batch_queries in data_iterator(data, batch_size):
-        def likelihood(x):
-            theta = x[M * M:]
-            r = 0
-            for q in batch_queries:
-                qid = q._qid
-                feat = q._feat
-                for k in range(1, M + 1):
-                    for k_ in range(1, M + 1):
-                        if k != k_:
-                            r += c[(k, k_, qid)] * math.log(h(theta, k, feat) * x[r_idx(k, k_)])
-                            r += not_c[(k, k_, qid)] * math.log(1 - h(theta, k, feat) * x[r_idx(k, k_)])
-            return -r
+    def likelihood(x):
+        theta = x[M * M:]
+        r = 0
+        for q in data:
+            qid = q._qid
+            feat = q._feat
+            for k in range(1, M + 1):
+                for k_ in range(1, M + 1):
+                    if k != k_:
+                        r += c[(k, k_, qid)] * math.log(h(theta, k, feat) * x[r_idx(k, k_)])
+                        r += not_c[(k, k_, qid)] * math.log(1 - h(theta, k, feat) * x[r_idx(k, k_)])
+        return -r
 
-        ret = opt.minimize(likelihood, x0, method='L-BFGS-B', bounds=bnds)
-        x0 = ret.x
+    ret = opt.minimize(likelihood, x0, method='L-BFGS-B', bounds=bnds)
+    x0 = ret.x
 
     theta_ = ret.x[M * M:]
     return theta_

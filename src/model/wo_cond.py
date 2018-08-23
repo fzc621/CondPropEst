@@ -9,16 +9,14 @@ import argparse
 import numpy as np
 import scipy.optimize as opt
 from ..lib.data_utils import Query, load_log, load_feat
-from ..lib.utils import makedirs
+from ..lib.utils import makedirs, likelihood
 from collections import defaultdict, Counter
-
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-            description='propensity estimation w/o condition')
+        description='propensity estimation w/o condition')
     parser.add_argument('-n', default=10, type=int,
-        help='number of top positions for which estimates are desired')
+                        help='number of top positions for which estimates are desired')
     parser.add_argument('feat_path', help='feature path')
     parser.add_argument('log_dir', help='click log dir')
     parser.add_argument('output_dir', help='model output directory')
@@ -66,10 +64,9 @@ if __name__ == '__main__':
                 if rk > M:
                     break
                 doc_id, _ = doc
-                w.update({(qid, doc_id, rk):eval('n{}'.format(i))})
+                w.update({(qid, doc_id, rk): eval('n{}'.format(i))})
 
-    c = Counter()
-    not_c = Counter()
+    c, not_c = np.zeros([M, M]), np.zeros([M, M])
     for i in range(2):
         logger = eval('log{}'.format(i))
         for q in logger:
@@ -83,35 +80,22 @@ if __name__ == '__main__':
                 v_ = (1 - delta) / w[(qid, doc_id, rk)]
                 for rk_ in range(1, M + 1):
                     if (qid, doc_id) in S[(rk, rk_)]:
-                        c.update({(rk, rk_): v})
-                        not_c.update({(rk, rk_): v_})
+                        c[rk - 1][rk_ - 1] += v
+                        not_c[rk - 1][rk_ - 1] += v_
 
-    def p_idx(k):
-        return (k - 1) * M + k - 1
+    a, b = 1e-4, 1 - 1e-4
+    x0 = np.random.uniform(a, b, M * M + M)
+    bnds = np.array([(a, b)] * (M * M + M))
 
-    def r_idx(k, k_):
-        assert k != k_
-        if k < k_:
-            return (k - 1) * M + k_ - 1
-        else:
-            return (k_ - 1) * M + k - 1
+    def f(x):
+        p = x[:M]
+        r = x[M:].reshape([M, M])
+        r_symm = (r + r.transpose()) / 2
+        return -likelihood(p, r_symm, c, not_c, M)
 
-    def likelihood(x):
-        r = 0
-        for k in range(1, M + 1):
-            for k_ in range(1, M + 1):
-                if k != k_:
-                    r += c[(k, k_)] * math.log(x[p_idx(k)] * x[r_idx(k, k_)])
-                    r += not_c[(k, k_)] * math.log(1 - x[p_idx(k)] * x[r_idx(k, k_)])
-        return -r
-
-    a, b = 1e-4, 1-1e-4
-    x0 = np.array([random.random() * (b - a) + a] * (M * M))
-    bnds = np.array([(a, b)] * (M * M))
-
-    ret = opt.minimize(likelihood, x0, method='L-BFGS-B', bounds=bnds)
+    ret = opt.minimize(f, x0, method='L-BFGS-B', bounds=bnds)
     xm = ret.x
-    prop_ = [str(xm[p_idx(k)] / xm[p_idx(1)]) for k in range(1, M + 1)]
+    prop_ = [str(xm[k] / xm[0]) for k in range(M)]
 
     feat_queries = load_feat(args.feat_path)
     makedirs(args.output_dir)
@@ -119,7 +103,7 @@ if __name__ == '__main__':
     with open(model_para_path, 'w') as fout:
         fout.write(' '.join(prop_))
 
-    est_path = os.path.join(args.output_dir, 'est.txt')
+    est_path = os.path.join(args.output_dir, 'train.est.txt')
     with open(est_path, 'w') as fout:
         for query in feat_queries:
             fout.write('qid:{} {}\n'.format(query._qid, ' '.join(prop_)))
