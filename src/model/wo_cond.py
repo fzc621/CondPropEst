@@ -13,7 +13,7 @@ from ..lib.utils import makedirs
 from collections import defaultdict, Counter
 
 def likelihood(p, r, c, not_c, M):
-    pr = np.repeat(p, M).reshape([M, M]) * r
+    pr = p * r
     obj = np.sum(c * np.log10(pr) + not_c * np.log10(1 - pr))
     return obj
 
