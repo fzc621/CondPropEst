@@ -37,11 +37,6 @@ model_dir="${res_dir}/wo_cond"
 python -m src.model.wo_cond -n 10 "${DATA_DIR}/set1bin.train.feat.txt" \
   ${log_dir} ${model_dir}
 
-# === w/ cond logistic ===
-# model_dir="${res_dir}/logistic"
-# python -m src.model.logistic -n 10 -d 10 "${DATA_DIR}/set1bin.train.feat.txt" \
-#   ${log_dir} ${model_dir}
-
 # === w/ cond recover ===
 # model_dir="${res_dir}/recover"
 # if [[ "$OSTYPE" == "linux-gnu" ]]; then

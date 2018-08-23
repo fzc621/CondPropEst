@@ -9,8 +9,13 @@ import argparse
 import numpy as np
 import scipy.optimize as opt
 from ..lib.data_utils import Query, load_log, load_feat
-from ..lib.utils import makedirs, likelihood
+from ..lib.utils import makedirs
 from collections import defaultdict, Counter
+
+def likelihood(p, r, c, not_c, M):
+    pr = np.repeat(p, M).reshape([M, M]) * r
+    obj = np.sum(c * np.log10(pr) + not_c * np.log10(1 - pr))
+    return obj
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
