@@ -19,15 +19,27 @@ def h(theta, k, feat):
     prod = np.dot(theta, feat)
     return 1 / pow(k, prod)
 
+def likelihood(theta, r, X, c, not_c, M):
+    exp = np.dot(X, theta).reshape(-1, 1)
+    rk = np.arange(1, M + 1).reshape(1, -1)
+    p = 1 / np.power(rk, exp)
+    pr = p.reshape([-1, M, 1]) * r
+    obj = np.sum(c * np.log10(pr) + not_c * np.log10(1 - pr))
+    if np.isnan(np.amin(p)):
+        print(p)
+        print(r)
+        print(pr)
+    return obj
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='propensity estimation w/o condition')
-    parser.add_argument('-n', default=10, type=int,
+    parser.add_argument('-m', default=10, type=int,
         help='number of top positions for which estimates are desired')
     parser.add_argument('-d', default=10, type=int,
         help='dimension of feature')
-    parser.add_argument('-s', default=256, type=int,
-        help='batch size')
+    parser.add_argument('-n', default=32, type=int,
+        help='training set size')
     parser.add_argument('feat_path', help='feature path')
     parser.add_argument('log_dir', help='click log dir')
     parser.add_argument('output_dir', help='model output directory')
@@ -35,12 +47,23 @@ if __name__ == '__main__':
 
     start = timeit.default_timer()
 
-    M = args.n
+    M = args.m
     D = args.d
+    N = args.n
     log0_path = os.path.join(args.log_dir, 'log0.txt')
     log1_path = os.path.join(args.log_dir, 'log1.txt')
     log0 = load_log(log0_path)
     log1 = load_log(log1_path)
+
+    feat_queries = load_feat(args.feat_path)
+    train_queries = random.sample(feat_queries, N)
+    X = np.array([q._feat for q in train_queries])
+    qid2idx = {}
+    idx2qid = []
+    for idx, q in enumerate(train_queries):
+        qid = q._qid
+        qid2idx[qid] = idx
+        idx2qid.append(qid)
 
     S = defaultdict(set)
     for q0, q1 in zip(log0, log1):
