@@ -43,6 +43,6 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -m 10 -d 10 -n 256\
       ${DATA_DIR}/set1bin.train.feat.txt ${log_dir} ${model_dir}"
 else
-  python -m src.model.recover -m 10 -d 10 -n 256 \
+  python -m src.model.recover -m 10 -d 10 \
     ${DATA_DIR}/set1bin.train.feat.txt ${log_dir} ${model_dir}
 fi
