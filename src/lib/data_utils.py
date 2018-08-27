@@ -26,7 +26,19 @@ def load_feat(path):
             feat = np.asarray([float(tok.split(':')[1]) for tok in toks[1:]])
             queries.append(Query(qid, feat=feat))
     return queries
-    
+
+def load_prop(path):
+    p = []
+    with open(path, 'r') as fin:
+        for line_ in fin:
+            line = line_.strip()
+            toks = line.split(' ')
+            qid = int(toks[0].split(':')[1])
+            prop = np.asarray([float(tok) for tok in toks[1:]])
+            p.append(prop)
+    p = np.array(p)
+    return p
+
 def load_log(path):
     logs = []
     with open(path, 'r') as fin:
@@ -60,9 +72,10 @@ def dump_feat(queries, path):
 
 class Query(object):
 
-    def __init__(self, qid, doc=None, feat=None):
+    def __init__(self, qid, doc=None, feat=None, prop=None):
         self._qid = qid
         self._feat = feat
+        self._prop = prop
         self._docs = []
         if not doc is None:
             self._docs.append(doc)

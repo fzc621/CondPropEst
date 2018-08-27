@@ -13,7 +13,8 @@ res_dir="${expt_dir}/result"
 # python -m src.sample_slice "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
 # python -m src.sim_feat $DATA_DIR $DATA_DIR
 
-# ground_truth_dir="${res_dir}/gt"
+# === ground truth ===
+ground_truth_dir="${res_dir}/gt"
 # python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
 #   "${ground_truth_dir}/set1bin.train.prop.txt"
 # python -m src.cal_prop -n 10 "${expt_dir}/para.dat" "${DATA_DIR}/set1bin.valid.feat.txt" \
@@ -33,16 +34,15 @@ res_dir="${expt_dir}/result"
 # done
 
 # === w/o cond ===
-# model_dir="${res_dir}/wo_cond"
-# python -m src.model.wo_cond -n 10 "${DATA_DIR}/set1bin.train.feat.txt" \
-#   ${log_dir} ${model_dir}
+model_dir="${res_dir}/wo_cond"
+# python -m src.model.wo_cond -n 10 ${DATA_DIR}/set1bin.train.feat.txt \
+#   --log_dir ${log_dir} ${model_dir}
+# python -m src.model.wo_cond --test --gt ${ground_truth_dir}/set1bin.test.prop.txt \
+#   ${DATA_DIR}/set1bin.test.feat.txt ${model_dir}
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover"
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  ~/submit_job.pl "${PYTHON_PATH} -m src.model.recover -m 10 -d 10\
-      ${DATA_DIR}/set1bin.train.feat.txt ${log_dir} ${model_dir}"
-else
-  python -m src.model.recover -m 10 -d 10 \
-    ${DATA_DIR}/set1bin.train.feat.txt ${log_dir} ${model_dir}
-fi
+# python -m src.model.recover -m 10 -d 10 \
+#   ${DATA_DIR}/set1bin.train.feat.txt --log_dir ${log_dir} ${model_dir}
+# python -m src.model.recover --test --gt ${ground_truth_dir}/set1bin.test.prop.txt \
+#   ${DATA_DIR}/set1bin.test.feat.txt ${model_dir}

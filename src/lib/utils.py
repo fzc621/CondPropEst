@@ -24,3 +24,8 @@ def read_para(path):
 def cal_prob(w, x, r):
     eta = np.dot(w, x)
     return pow(1 / r, eta)
+
+def _MSE(p, p_):
+    ip = 1 / p
+    ip_ = 1 / p_
+    return np.mean((ip - ip_) ** 2)
