@@ -35,6 +35,9 @@ ground_truth_dir="${res_dir}/gt"
 #     "${log_dir}/log${i}.txt"
 # done
 
+NPY_DIR="${expt_dir}/data"
+# python -m src.data_process -m 10 -d 10 ${log_dir} ${DATA_DIR} ${NPY_DIR}
+
 # === w/o cond ===
 model_dir="${res_dir}/wo_cond"
 # python -m src.model.wo_cond -n 10 ${DATA_DIR}/set1bin.train.feat.txt \
@@ -45,6 +48,12 @@ model_dir="${res_dir}/wo_cond"
 # === w/ cond recover ===
 model_dir="${res_dir}/recover"
 # python -m src.model.recover -m 10 -d 10 \
-#   ${DATA_DIR}/set1bin.train.feat.txt --log_dir ${log_dir} ${model_dir}
+#   ${NPY_DIR} ${model_dir}
+# python -m src.model.recover --test --gt ${ground_truth_dir} ${NPY_DIR} ${model_dir}
+
+# === w/ cond mlp ===
+model_dir="${res_dir}/mlp"
+# python -m src.model.mlp -m 10 -d 10 \
+#   ${NPY_DIR} ${model_dir}
 # python -m src.model.recover --test --gt ${ground_truth_dir}/set1bin.test.prop.txt \
 #   ${DATA_DIR}/set1bin.test.feat.txt ${model_dir}
