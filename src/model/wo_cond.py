@@ -8,7 +8,7 @@ import timeit
 import argparse
 import numpy as np
 import scipy.optimize as opt
-from ..lib.data_utils import Query, load_log, load_feat, load_prop
+from ..lib.data_utils import Query, load_log, load_prop
 from ..lib.utils import makedirs, _MSE
 from collections import defaultdict, Counter
 
@@ -23,23 +23,21 @@ if __name__ == '__main__':
     parser.add_argument('-n', default=10, type=int,
                         help='number of top positions for which estimates are desired')
     parser.add_argument('--test', action='store_true', help='train/test mode')
-    parser.add_argument('--gt', help='ground truth')
+    parser.add_argument('--gt_dir', help='ground truth directory')
     parser.add_argument('--log_dir', help='click log dir')
-    parser.add_argument('feat_path', help='feature path')
     parser.add_argument('model_dir', help='model directory')
     args = parser.parse_args()
 
     start = timeit.default_timer()
 
     if args.test:
-        prop = load_prop(args.gt)
+        gt_path = os.path.join(args.gt_dir, 'set1bin.test.prop.txt')
+        prop = load_prop(gt_path)
+        model_para_path = os.path.join(args.model_dir, 'para.npy')
+        para_ = np.load(model_para_path)
         N = prop.shape[0]
-        model_para_path = os.path.join(args.model_dir, 'para.dat')
-        with open(model_para_path, 'r') as fin:
-            toks = fin.readline().strip().split()
-            para_ = np.array(list(map(lambda x: float(x), toks)))
-            prop_ = np.tile(para_, (N, 1))
-            print('MSE: {}'.format(_MSE(prop, prop_)))
+        prop_ = np.tile(para_, (N, 1))
+        print('MSE: {}'.format(_MSE(prop, prop_)))
     else:
         M = args.n
         log0_path = os.path.join(args.log_dir, 'log0.txt')
@@ -100,7 +98,7 @@ if __name__ == '__main__':
                             c[rk - 1][rk_ - 1] += v
                             not_c[rk - 1][rk_ - 1] += v_
 
-        a, b = 1e-4, 1 - 1e-4
+        a, b = 1e-6, 1 - 1e-6
         x0 = np.random.uniform(a, b, M * M + M)
         bnds = np.array([(a, b)] * (M * M + M))
 
@@ -111,19 +109,12 @@ if __name__ == '__main__':
             return -likelihood(p, r_symm, c, not_c, M)
 
         ret = opt.minimize(f, x0, method='L-BFGS-B', bounds=bnds)
-        xm = ret.x
-        prop_ = [str(xm[k] / xm[0]) for k in range(M)]
+        prop_ = ret.x[:M]
+        prop_ = prop_ / prop_[0]
 
-        feat_queries = load_feat(args.feat_path)
         makedirs(args.model_dir)
-        model_para_path = os.path.join(args.model_dir, 'para.dat')
-        with open(model_para_path, 'w') as fout:
-            fout.write(' '.join(prop_))
-
-        est_path = os.path.join(args.model_dir, 'train.est.txt')
-        with open(est_path, 'w') as fout:
-            for query in feat_queries:
-                fout.write('qid:{} {}\n'.format(query._qid, ' '.join(prop_)))
+        model_para_path = os.path.join(args.model_dir, 'para.npy')
+        np.save(model_para_path, prop_)
 
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

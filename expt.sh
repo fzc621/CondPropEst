@@ -40,10 +40,8 @@ NPY_DIR="${expt_dir}/data"
 
 # === w/o cond ===
 model_dir="${res_dir}/wo_cond"
-# python -m src.model.wo_cond -n 10 ${DATA_DIR}/set1bin.train.feat.txt \
-#   --log_dir ${log_dir} ${model_dir}
-# python -m src.model.wo_cond --test --gt ${ground_truth_dir}/set1bin.test.prop.txt \
-#   ${DATA_DIR}/set1bin.test.feat.txt ${model_dir}
+# python -m src.model.wo_cond -n 10 --log_dir ${log_dir} ${model_dir}
+# python -m src.model.wo_cond --test --gt ${ground_truth_dir} ${model_dir}
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover"
