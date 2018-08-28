@@ -134,7 +134,8 @@ if __name__ == '__main__':
         X = np.array(X)
 
         a, b = 1e-6, 1 - 1e-6
-        x0 = np.array([random.random() * (b - a) + a] * (M * M + D))
+        # x0 = np.array([random.random()] * (M * M + D))
+        x0 = np.array([random.random() * (b - a) + a for i in range(M * M + D)])
         bnds = np.array([(a, b)] * (M * M + D))
 
         def f(x):

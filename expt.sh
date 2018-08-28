@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -e
 
 DATASET_DIR='../../dataset/set1bin'
