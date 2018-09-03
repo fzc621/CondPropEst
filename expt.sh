@@ -45,13 +45,11 @@ model_dir="${res_dir}/wo_cond"
 
 # === w/ cond recover ===
 model_dir="${res_dir}/recover"
-# python -m src.model.recover -m 10 -d 10 \
-#   ${NPY_DIR} ${model_dir}
+# python -m src.model.recover -m 10 -d 10 ${NPY_DIR} ${model_dir}
 # python -m src.model.recover --test --gt ${ground_truth_dir} ${NPY_DIR} ${model_dir}
 
 # === w/ cond mlp ===
-model_dir="${res_dir}/mlp"
-# python -m src.model.mlp -m 10 -d 10 \
-#   ${NPY_DIR} ${model_dir}
-# python -m src.model.recover --test --gt ${ground_truth_dir}/set1bin.test.prop.txt \
-#   ${DATA_DIR}/set1bin.test.feat.txt ${model_dir}
+model_dir="${res_dir}/ann/mlp"
+python -m src.model.ann -m 10 -d 10 mlp ${NPY_DIR} ${model_dir} --gt ${ground_truth_dir}
+python -m src.model.ann --test --gt ${ground_truth_dir} mlp \
+	${NPY_DIR} ${model_dir}

@@ -51,7 +51,10 @@ if __name__ == '__main__':
         exp = np.dot(X, theta).reshape(-1, 1)
         rk = np.arange(1, M + 1).reshape(1, -1)
         prop_ = 1 / np.power(rk, exp)
-        print('MSE: {}'.format(_MSE(prop, prop_)))
+        test_mse = _MSE(prop, prop_)
+        test_prop_path = os.path.join(args.model_dir,
+                                    'test.prop.mse{:.3f}.txt'.format(test_mse))
+        np.savetxt(test_prop_path, prop_, fmt='%.18f')
     else:
         M = args.m
         D = args.d
@@ -73,6 +76,7 @@ if __name__ == '__main__':
 
         ret = opt.minimize(f, x0, method='L-BFGS-B', bounds=bnds)
         theta = ret.x[M * M:]
+        print('loss: {}'.format(f(ret.x)))
 
         makedirs(args.model_dir)
         model_para_path = os.path.join(args.model_dir, 'para.npy')
