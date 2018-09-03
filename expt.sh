@@ -43,12 +43,12 @@ model_dir="${res_dir}/wo_cond"
 # python -m src.model.wo_cond -n 10 --log_dir ${log_dir} ${model_dir}
 # python -m src.model.wo_cond --test --gt ${ground_truth_dir} ${model_dir}
 
-# === w/ cond recover ===
+# === recover ===
 model_dir="${res_dir}/recover"
 # python -m src.model.recover -m 10 -d 10 ${NPY_DIR} ${model_dir}
 # python -m src.model.recover --test --gt ${ground_truth_dir} ${NPY_DIR} ${model_dir}
 
-# === w/ cond mlp ===
+# === mlp ===
 model_dir="${res_dir}/ann/mlp"
 python -m src.model.ann -m 10 -d 10 mlp ${NPY_DIR} ${model_dir} --gt ${ground_truth_dir}
 python -m src.model.ann --test --gt ${ground_truth_dir} mlp \
