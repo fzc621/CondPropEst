@@ -50,6 +50,11 @@ model_dir="${res_dir}/recover"
 
 # === mlp ===
 model_dir="${res_dir}/ann/mlp"
-python -m src.model.ann -m 10 -d 10 mlp ${NPY_DIR} ${model_dir} --gt ${ground_truth_dir}
-python -m src.model.ann --test --gt ${ground_truth_dir} mlp \
-	${NPY_DIR} ${model_dir}
+# python -m src.model.ann -m 10 -d 10 mlp ${NPY_DIR} ${model_dir} --gt ${ground_truth_dir}
+# python -m src.model.ann --test --gt ${ground_truth_dir} mlp \
+# 	${NPY_DIR} ${model_dir}
+
+# === poly ===
+model_dir="${res_dir}/poly"
+python -m src.model.poly -m 10 -d 10 ${NPY_DIR} ${model_dir}
+python -m src.model.poly --test --gt ${ground_truth_dir} ${NPY_DIR} ${model_dir}
