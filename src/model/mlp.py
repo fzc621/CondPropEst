@@ -12,7 +12,7 @@ import tensorflow as tf
 
 
 l, h = 1e-6, 1 - 1e-6
-N1 = 12
+N1 = 16
 N2 = 16
 
 def prob_variable(shape):
@@ -51,11 +51,11 @@ class MLP(object):
         r_symm = tf.div(tf.add(r, tf.transpose(r)), 2.0)
         clip_r = tf.clip_by_value(r_symm, clip_value_min=l, clip_value_max=h)
 
-        pr = tf.reshape(p_,[-1, M, 1]) * r
-        self.loss = -tf.reduce_sum(tf.add(self.c * tf.log(pr), self.not_c * tf.log(1 - pr)))
+        self.pr = tf.reshape(p_,[-1, M, 1]) * clip_r
+        self.loss = -tf.reduce_sum(tf.add(self.c * tf.log(self.pr), self.not_c * tf.log(1 - self.pr)))
 
         self.norm_p_ = tf.div(p_, tf.reshape(p_[:,0], (-1, 1)))
-        self.mse = tf.reduce_mean(tf.square(1 / self.p - 1 / self.norm_p_))
+        self.mse = tf.sqrt(tf.reduce_mean(tf.square((self.p - self.norm_p_)) / self.norm_p_))
 
         self.global_step = tf.Variable(0, trainable=False)
         self.train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.loss, global_step=self.global_step)

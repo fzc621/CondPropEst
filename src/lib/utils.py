@@ -17,15 +17,19 @@ def read_para(path):
         with open(path, 'r') as fin:
             w = np.loadtxt(fin)
     else:
-        w = np.random.power(0.5, 10)
+        w = -np.random.power(0.5, 10)
+        makedirs(os.path.dirname(path))
         np.savetxt(path, w)
     return w
 
-def cal_prob(w, x, r):
-    eta = np.dot(w, x)
-    return pow(1 / r, eta)
+def cal_prob(w, x, r, method):
+    if method == 'power':
+        eta = np.dot(w, x)
+        return pow(1 / r, eta)
+    elif method == 'exp':
+        # exponential function
+        a = np.dot(w, x) / 3.2
+        return np.power(a, r - 1)
 
 def _MSE(p, p_):
-    ip = 1 / p
-    ip_ = 1 / p_
-    return np.mean((ip - ip_) ** 2)
+    return np.sqrt(np.mean(((p - p_)/p_) ** 2))

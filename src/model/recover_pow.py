@@ -13,11 +13,6 @@ from ..lib.data_utils import Query, load_feat, load_prop
 from ..lib.utils import makedirs, _MSE
 from collections import defaultdict, Counter
 
-
-def h(theta, k, feat):
-    prod = np.dot(theta, feat)
-    return 1 / pow(k, prod)
-
 def likelihood(theta, r, X, c, not_c, M):
     exp = np.dot(X, theta).reshape(-1, 1)
     rk = np.arange(1, M + 1).reshape(1, -1)
@@ -51,6 +46,23 @@ if __name__ == '__main__':
         exp = np.dot(X, theta).reshape(-1, 1)
         rk = np.arange(1, M + 1).reshape(1, -1)
         prop_ = 1 / np.power(rk, exp)
+
+        diff = np.abs(prop_ - prop)
+        rel_diff = diff / prop_
+
+        plt.figure(figsize=(10,10))
+        plt.subplot(211)
+        for i in range(10):
+            plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
+        plt.legend()
+        plt.title('Absolute Difference (|1/p_ - 1/p|)')
+        plt.subplot(212)
+        for i in range(10):
+            plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
+        plt.legend()
+        plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
+        plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
+        
         test_mse = _MSE(prop, prop_)
         test_prop_path = os.path.join(args.model_dir,
                                     'test.prop.mse{:.3f}.txt'.format(test_mse))

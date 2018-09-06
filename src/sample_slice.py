@@ -37,6 +37,8 @@ if __name__ == '__main__':
     slice1 = sorted(slice1, key=lambda x:x._qid)
     train_slice = sorted(queries[slice_size:], key=lambda x:x._qid)
 
+    makedirs(args.output_dir)
+    
     slice0_path = os.path.join(args.output_dir, 'set1bin.slice0.txt')
     slice1_path = os.path.join(args.output_dir, 'set1bin.slice1.txt')
     train_path = os.path.join(args.output_dir, 'set1bin.train.txt')

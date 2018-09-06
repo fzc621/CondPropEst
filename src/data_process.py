@@ -110,11 +110,11 @@ if __name__ == '__main__':
     train_feat_npy_path = os.path.join(args.npy_dir, 'train.feat.npy')
     np.save(train_feat_npy_path, X)
 
-    valid_feat_path = os.path.join(args.data_dir, 'set1bin.valid.feat.txt')
-    valid_feat_queries = load_feat(valid_feat_path)
-    Y = np.array([q._feat for q in valid_feat_queries])
-    valid_feat_npy_path = os.path.join(args.npy_dir, 'valid.feat.npy')
-    np.save(valid_feat_npy_path, Y)
+    # valid_feat_path = os.path.join(args.data_dir, 'set1bin.valid.feat.txt')
+    # valid_feat_queries = load_feat(valid_feat_path)
+    # Y = np.array([q._feat for q in valid_feat_queries])
+    # valid_feat_npy_path = os.path.join(args.npy_dir, 'valid.feat.npy')
+    # np.save(valid_feat_npy_path, Y)
 
     test_feat_path = os.path.join(args.data_dir, 'set1bin.test.feat.txt')
     test_feat_queries = load_feat(test_feat_path)

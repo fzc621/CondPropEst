@@ -16,7 +16,8 @@ if __name__ == '__main__':
         help='#binary value')
     parser.add_argument('-f', '--float', type=int, default=6,
         help='#float value')
-    parser.add_argument('input_dir', help='input dir')
+    parser.add_argument('train_path', help='train path')
+    parser.add_argument('test_path', help='test path')
     parser.add_argument('output_dir', help='output dir')
     args = parser.parse_args()
 
@@ -24,12 +25,7 @@ if __name__ == '__main__':
     np.random.seed()
     start = timeit.default_timer()
 
-    filenames = [filename for filename in os.listdir(args.input_dir)
-                    if filename.endswith('.txt') and not filename.endswith('feat.txt')]
-
-    makedirs(args.output_dir)
-    for filename in filenames:
-        filepath = os.path.join(args.input_dir, filename)
+    for filepath in [args.train_path, args.test_path]:
         queries = load_query(filepath)
         for query in queries:
             query._feat = []
@@ -37,6 +33,7 @@ if __name__ == '__main__':
                                     for i in range(args.binary)])
             query._feat.extend([np.random.power(i+1)
                                     for i in range(args.float)])
+        filename = os.path.basename(filepath)
         featpath = os.path.join(args.output_dir,
                                     '{}.feat.txt'.format(filename[:-4]))
         dump_feat(queries, featpath)

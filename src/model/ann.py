@@ -12,6 +12,7 @@ import tensorflow as tf
 from .mlp import MLP
 from ..lib.data_utils import load_prop
 from ..lib.utils import makedirs
+import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -27,7 +28,6 @@ if __name__ == '__main__':
         help='inference version')
     parser.add_argument('--test', action='store_true', help='train/test mode')
     parser.add_argument('--gt_dir', help='ground truth directory')
-    parser.add_argument('--log_dir', help='click log dir')
     parser.add_argument('model', choices=['mlp'])
     parser.add_argument('npy_dir', help='numpy dir')
     parser.add_argument('model_dir', help='model directory')
@@ -57,10 +57,9 @@ if __name__ == '__main__':
 
             best_mse = math.inf
             for epoch in range(args.epoch_num):
-                p_, train_loss, train_mse, _ = sess.run([model.norm_p_, model.loss, model.mse, model.train_op],
+                train_loss, train_mse, _ = sess.run([model.loss, model.mse, model.train_op],
                          feed_dict={model.x:X_train, model.p:Y_train, model.c:c, model.not_c: not_c})
                 if train_mse < best_mse:
-                    best_p = p_
                     best_mse = train_mse
                     model.saver.save(sess, '{}/checkpoint'.format(args.model_dir), global_step=model.global_step)
                 if epoch % 5 == 0:
@@ -79,6 +78,22 @@ if __name__ == '__main__':
 
             p_, test_mse = sess.run([model.norm_p_, model.mse],
                                     feed_dict={model.x:X_test, model.p:Y_test})
+
+            diff = np.abs(p_ - Y_test)
+            rel_diff = diff / p_
+
+            plt.figure(figsize=(10,10))
+            plt.subplot(211)
+            for i in range(10):
+                plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
+            plt.legend()
+            plt.title('Absolute Difference (|1/p_ - 1/p|)')
+            plt.subplot(212)
+            for i in range(10):
+                plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
+            plt.legend()
+            plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
+            plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
 
             test_prop_path = os.path.join(args.model_dir,
                                         'test.prop.mse{:.3f}.txt'.format(test_mse))
