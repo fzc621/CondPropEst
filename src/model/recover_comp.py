@@ -15,10 +15,11 @@ from collections import defaultdict, Counter
 import matplotlib.pyplot as plt
 
 def likelihood(theta, r, X, c, not_c, M):
-    base = np.dot(X, theta).reshape(-1, 1) / 3.2
+    a = np.dot(X, theta).reshape(-1, 1)
     rk = np.arange(M).reshape(1, -1)
-    p = np.power(base, rk)
-    pr = np.clip(p.reshape([-1, M, 1]) * r, 1e-6, 1 - 1e-6)
+    p = 1 / (a * rk + 1)
+    p = np.clip(p, 1e-6, 1 - 1e-6)
+    pr = p.reshape([-1, M, 1]) * r
     obj = np.sum(c * np.log10(pr) + not_c * np.log10(1 - pr))
     return obj
 
@@ -38,18 +39,19 @@ if __name__ == '__main__':
     start = timeit.default_timer()
     if args.test:
         gt_path = os.path.join(args.gt_dir, 'set1bin.test.prop.txt')
-        prop = load_prop(gt_path)
-        M = prop.shape[1]
+        p = load_prop(gt_path)
+        M = p.shape[1]
         model_para_path = os.path.join(args.model_dir, 'para.npy')
         theta = np.load(model_para_path)
         test_feat_npy_path = os.path.join(args.npy_dir, 'test.feat.npy')
         X = np.load(test_feat_npy_path)
-        base = np.dot(X, theta).reshape(-1, 1) / 3.2
+        a = np.dot(X, theta).reshape(-1, 1)
         rk = np.arange(M).reshape(1, -1)
-        prop_ = np.power(base, rk)
+        p_ = 1 / (a * rk + 1)
+        p_ = p_ / p_[:,0].reshape(-1,1)
 
-        diff = np.abs(prop_ - prop)
-        rel_diff = diff / prop_
+        diff = np.abs(p_ - p)
+        rel_diff = diff / p_
 
         plt.figure(figsize=(10,10))
         plt.subplot(211)
@@ -64,10 +66,10 @@ if __name__ == '__main__':
         plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
         plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
 
-        test_mse = _MSE(prop, prop_)
+        test_mse = _MSE(p, p_)
         test_prop_path = os.path.join(args.model_dir,
                                     'test.prop.mse{:.3f}.txt'.format(test_mse))
-        np.savetxt(test_prop_path, prop_, fmt='%.18f')
+        np.savetxt(test_prop_path, p_, fmt='%.18f')
     else:
         M = args.m
         D = args.d

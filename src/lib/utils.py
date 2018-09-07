@@ -17,7 +17,7 @@ def read_para(path):
         with open(path, 'r') as fin:
             w = np.loadtxt(fin)
     else:
-        w = -np.random.power(0.5, 10)
+        w = np.random.power(0.5, 10)
         makedirs(os.path.dirname(path))
         np.savetxt(path, w)
     return w
@@ -30,6 +30,9 @@ def cal_prob(w, x, r, method):
         # exponential function
         a = np.dot(w, x) / 3.2
         return np.power(a, r - 1)
+    elif method == 'comp':
+        a = np.dot(w, x)
+        return 1 / (a * (r - 1) + 1)
 
 def _MSE(p, p_):
     return np.sqrt(np.mean(((p - p_)/p_) ** 2))

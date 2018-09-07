@@ -17,6 +17,8 @@ if __name__ == '__main__':
                         help='the prob of users click on a relevant result')
     parser.add_argument('--epsilon_n', default=0.1, type=float,
                         help='the prob of users click on a irrelevant result')
+    parser.add_argument('-m', choices=['exp', 'power', 'comp'],
+        help='simulation function')
     parser.add_argument('para_path', help='func parameter path')
     parser.add_argument('data_path', help='data path')
     parser.add_argument('score_path', help='score path')
@@ -55,7 +57,7 @@ if __name__ == '__main__':
                 docs = sorted(query._docs, key=lambda x: x[1], reverse=True)
                 for rk, sr in enumerate(docs, start=1):
                     doc_id, _, rel = sr
-                    pr = cal_prob(w, feat, rk)
+                    pr = cal_prob(w, feat, rk, args.m)
                     clicked = False
                     if prob_test(pr):
                         if rel:

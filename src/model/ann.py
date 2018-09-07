@@ -55,15 +55,15 @@ if __name__ == '__main__':
             else:
                 tf.global_variables_initializer().run()
 
-            best_mse = math.inf
+            best_loss = math.inf
             for epoch in range(args.epoch_num):
                 train_loss, train_mse, _ = sess.run([model.loss, model.mse, model.train_op],
                          feed_dict={model.x:X_train, model.p:Y_train, model.c:c, model.not_c: not_c})
-                if train_mse < best_mse:
-                    best_mse = train_mse
+                if train_loss < best_loss:
+                    best_loss = train_loss
                     model.saver.save(sess, '{}/checkpoint'.format(args.model_dir), global_step=model.global_step)
                 if epoch % 5 == 0:
-                    print('{}\tLOSS: {:.4f}\tMSE:{:.4f}\tBest MSE:{:.4f}'.format(epoch, train_loss, train_mse, best_mse))
+                    print('{}\tLOSS: {:.4f}\tMSE:{:.4f}'.format(epoch, train_loss, train_mse))
         else:
             if args.inference_version == 0:  # Load the checkpoint
                 model_path = tf.train.latest_checkpoint(args.model_dir)
