@@ -96,7 +96,7 @@ if __name__ == '__main__':
             plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
 
             test_prop_path = os.path.join(args.model_dir,
-                                        'test.prop.mse{:.3f}.txt'.format(test_mse))
+                                        'test.prop.mse{:.5f}.txt'.format(test_mse))
 
             np.savetxt(test_prop_path, p_, fmt='%.18f')
     end = timeit.default_timer()

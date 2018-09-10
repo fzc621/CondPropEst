@@ -37,7 +37,11 @@ if __name__ == '__main__':
         para_ = np.load(model_para_path)
         N = prop.shape[0]
         prop_ = np.tile(para_, (N, 1))
-        print('MSE: {}'.format(_MSE(prop, prop_)))
+        test_mse = _MSE(prop, prop_)
+        test_prop_path = os.path.join(args.model_dir,
+                                    'test.prop.mse{:.5f}.txt'.format(test_mse))
+
+        np.savetxt(test_prop_path, prop_, fmt='%.18f')
     else:
         M = args.n
         log0_path = os.path.join(args.log_dir, 'log0.txt')

@@ -2,7 +2,7 @@
 
 set -e
 
-func="comp"
+func="power"
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   python="/home/ys756/anaconda3/envs/fzc/bin/python"
@@ -37,34 +37,34 @@ svm_classify="${svm_dir}/svm_rank_classify"
 log_dir="${expt_dir}/log"
 res_dir="${expt_dir}/result"
 ground_truth_dir="${expt_dir}/ground_truth_$func"
-#
-# $python -m src.sample_slice -o $ol "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
-# $python -m src.sim_feat ${DATA_DIR}/set1bin.train.txt ${DATASET_DIR}/set1bin.test.txt $DATA_DIR
-#
-# === ground truth ===
-# $python -m src.cal_prop -n 10 -m $func "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
-#   "${ground_truth_dir}/set1bin.train.prop.txt"
-# $python -m src.cal_prop -n 10 -m $func "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.test.feat.txt" \
-#   "${ground_truth_dir}/set1bin.test.prop.txt"
-
-
-# for i in 0 1;
-# do
-#   # $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
-#   # $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
-#   #     "${expt_dir}/score${i}.dat"
-#   $python -m src.sim_click -s $sw -m $func "${expt_dir}/para.dat" \
-#     "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/score${i}.dat" \
-#     "${DATA_DIR}/set1bin.train.feat.txt" "${log_dir}/log${i}.txt"
-# done
-
 NPY_DIR="${expt_dir}/data"
-# $python -m src.data_process -m 10 -d 10 ${log_dir} ${DATA_DIR} ${NPY_DIR}
+
+$python -m src.sample_slice -o $ol "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
+$python -m src.sim_feat ${DATA_DIR}/set1bin.train.txt ${DATASET_DIR}/set1bin.test.txt $DATA_DIR
+
+# === ground truth ===
+$python -m src.cal_prop -n 10 -m $func "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
+  "${ground_truth_dir}/set1bin.train.prop.txt"
+$python -m src.cal_prop -n 10 -m $func "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.test.feat.txt" \
+  "${ground_truth_dir}/set1bin.test.prop.txt"
+
+#
+for i in 0 1;
+do
+  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
+  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
+      "${expt_dir}/score${i}.dat"
+  $python -m src.sim_click -s $sw -m $func "${expt_dir}/para.dat" \
+    "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/score${i}.dat" \
+    "${DATA_DIR}/set1bin.train.feat.txt" "${log_dir}/log${i}.txt"
+done
+
+$python -m src.data_process -m 10 -d 10 ${log_dir} ${DATA_DIR} ${NPY_DIR}
 
 # === w/o cond ===
 model_dir="${res_dir}/wo_cond"
-# $python -m src.model.wo_cond -n 10 --log_dir ${log_dir} ${model_dir}
-# $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir}
+$python -m src.model.wo_cond -n 10 --log_dir ${log_dir} ${model_dir}
+$python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir}
 
 # === recover ===
 model_dir="${res_dir}/recover_$func"

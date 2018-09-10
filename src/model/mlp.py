@@ -12,7 +12,7 @@ import tensorflow as tf
 
 
 l, h = 1e-6, 1 - 1e-6
-N1 = 16#power:12 exp:16
+N1 = 12#power:12 exp:16
 N2 = 12
 
 def prob_variable(shape):
