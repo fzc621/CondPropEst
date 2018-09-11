@@ -12,10 +12,13 @@ fi
 
 if [[ $# == 3 ]]; then
   expt_dir="data/set1bin_${func}/expt/$1/$2/$3"
+  DATA_DIR="data/set1bin_${func}/input/$1/$2/$3"
 elif [[ $# == 2 ]]; then
   expt_dir="data/set1bin_${func}/expt/$1/$2"
+  DATA_DIR="data/set1bin_${func}/input/$1/$2"
 else
   expt_dir="data/set1bin_${func}/expt"
+  DATA_DIR="data/set1bin_${func}/input"
 fi
 
 if [[ "$1" == "overlap" ]]; then
@@ -30,7 +33,7 @@ else
 fi
 
 DATASET_DIR='../../dataset/set1bin'
-DATA_DIR="data/set1bin_${func}/input"
+
 svm_dir="../svm_rank"
 svm_learn="${svm_dir}/svm_rank_learn"
 svm_classify="${svm_dir}/svm_rank_classify"
