@@ -79,21 +79,21 @@ if __name__ == '__main__':
             p_, test_mse = sess.run([model.norm_p_, model.mse],
                                     feed_dict={model.x:X_test, model.p:Y_test})
 
-            diff = np.abs(p_ - Y_test)
-            rel_diff = diff / p_
-
-            plt.figure(figsize=(10,10))
-            plt.subplot(211)
-            for i in range(10):
-                plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
-            plt.legend()
-            plt.title('Absolute Difference (|1/p_ - 1/p|)')
-            plt.subplot(212)
-            for i in range(10):
-                plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
-            plt.legend()
-            plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
-            plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
+            # diff = np.abs(p_ - Y_test)
+            # rel_diff = diff / p_
+# 
+            # plt.figure(figsize=(10,10))
+            # plt.subplot(211)
+            # for i in range(10):
+            #     plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
+            # plt.legend()
+            # plt.title('Absolute Difference (|1/p_ - 1/p|)')
+            # plt.subplot(212)
+            # for i in range(10):
+            #     plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
+            # plt.legend()
+            # plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
+            # plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
 
             test_prop_path = os.path.join(args.model_dir,
                                         'test.prop.mse{:.5f}.txt'.format(test_mse))

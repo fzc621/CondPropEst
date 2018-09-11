@@ -48,21 +48,21 @@ if __name__ == '__main__':
         rk = np.arange(1, M + 1).reshape(1, -1)
         prop_ = 1 / np.power(rk, exp)
 
-        diff = np.abs(prop_ - prop)
-        rel_diff = diff / prop_
-
-        plt.figure(figsize=(10,10))
-        plt.subplot(211)
-        for i in range(10):
-            plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
-        plt.legend()
-        plt.title('Absolute Difference (|1/p_ - 1/p|)')
-        plt.subplot(212)
-        for i in range(10):
-            plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
-        plt.legend()
-        plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
-        plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
+        # diff = np.abs(prop_ - prop)
+        # rel_diff = diff / prop_
+        #
+        # plt.figure(figsize=(10,10))
+        # plt.subplot(211)
+        # for i in range(10):
+        #     plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
+        # plt.legend()
+        # plt.title('Absolute Difference (|1/p_ - 1/p|)')
+        # plt.subplot(212)
+        # for i in range(10):
+        #     plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
+        # plt.legend()
+        # plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
+        # plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
 
         test_mse = _MSE(prop, prop_)
         test_prop_path = os.path.join(args.model_dir,
