@@ -13,6 +13,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='simulate the clicks')
     parser.add_argument('-s', '--sweep', default=5, type=int,
                         help='#sweeps of the dataset')
+    parser.add_argument('-d', default=10, type=int,
+        help='#dimension of feature')
     parser.add_argument('--epsilon_p', default=1.0, type=float,
                         help='the prob of users click on a relevant result')
     parser.add_argument('--epsilon_n', default=0.1, type=float,
@@ -47,7 +49,7 @@ if __name__ == '__main__':
             doc_id = len(queries[idx]._docs)
             queries[idx].append((doc_id, score, rel))
 
-    w = read_para(args.para_path)
+    w = read_para(args.para_path, args.d)
     makedirs(os.path.dirname(args.log_path))
     with open(args.log_path, 'w') as fout:
         for i in range(args.sweep):

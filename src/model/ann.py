@@ -9,10 +9,9 @@ import timeit
 import argparse
 import numpy as np
 import tensorflow as tf
-from .mlp import MLP
+from . import mlp, mlp_power_best
 from ..lib.data_utils import load_prop
 from ..lib.utils import makedirs
-import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -28,7 +27,7 @@ if __name__ == '__main__':
         help='inference version')
     parser.add_argument('--test', action='store_true', help='train/test mode')
     parser.add_argument('--gt_dir', help='ground truth directory')
-    parser.add_argument('model', choices=['mlp'])
+    parser.add_argument('model', choices=['mlp', 'mlp_power_best'])
     parser.add_argument('npy_dir', help='numpy dir')
     parser.add_argument('model_dir', help='model directory')
     args = parser.parse_args()
@@ -41,7 +40,9 @@ if __name__ == '__main__':
     makedirs(args.model_dir)
     with tf.Session() as sess:
         if args.model == 'mlp':
-            model = MLP(D, M)
+            model = mlp.MLP(D, M)
+        elif args.model == 'mlp_power_best':
+            model = mlp_power_best.MLP(D, M)
         if not args.test:
             click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
             c, not_c = np.load(click_npy_path)
@@ -55,15 +56,16 @@ if __name__ == '__main__':
             else:
                 tf.global_variables_initializer().run()
 
-            best_loss = math.inf
+            best_err = math.inf
             for epoch in range(args.epoch_num):
-                train_loss, train_mse, _ = sess.run([model.loss, model.mse, model.train_op],
+                train_loss, train_err, _ = sess.run([model.loss, model.err, model.train_op],
                          feed_dict={model.x:X_train, model.p:Y_train, model.c:c, model.not_c: not_c})
-                if train_loss < best_loss:
-                    best_loss = train_loss
+                if train_err < best_err:
+                    best_err = train_err
                     model.saver.save(sess, '{}/checkpoint'.format(args.model_dir), global_step=model.global_step)
                 if epoch % 5 == 0:
-                    print('{}\tLOSS: {:.4f}\tMSE:{:.4f}'.format(epoch, train_loss, train_mse))
+                    print('{}\tLOSS: {:.4f}\tERR: {:.4f}\tLOWEST ERR:{:.4f}'.format(epoch, train_loss, train_err, best_err))
+            print('Relative Error on training set: {}'.format(best_err))
         else:
             if args.inference_version == 0:  # Load the checkpoint
                 model_path = tf.train.latest_checkpoint(args.model_dir)
@@ -76,28 +78,10 @@ if __name__ == '__main__':
             test_gt_path = os.path.join(args.gt_dir, 'set1bin.test.prop.txt')
             Y_test = load_prop(test_gt_path)
 
-            p_, test_mse = sess.run([model.norm_p_, model.mse],
+            p_, test_err = sess.run([model.norm_p_, model.err],
                                     feed_dict={model.x:X_test, model.p:Y_test})
-
-            # diff = np.abs(p_ - Y_test)
-            # rel_diff = diff / p_
-# 
-            # plt.figure(figsize=(10,10))
-            # plt.subplot(211)
-            # for i in range(10):
-            #     plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
-            # plt.legend()
-            # plt.title('Absolute Difference (|1/p_ - 1/p|)')
-            # plt.subplot(212)
-            # for i in range(10):
-            #     plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
-            # plt.legend()
-            # plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
-            # plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
-
-            test_prop_path = os.path.join(args.model_dir,
-                                        'test.prop.mse{:.5f}.txt'.format(test_mse))
-
+            print('Relative Error on test set: {}'.format(test_err))
+            test_prop_path = os.path.join(args.model_dir, 'set1.test.prop.txt')
             np.savetxt(test_prop_path, p_, fmt='%.18f')
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

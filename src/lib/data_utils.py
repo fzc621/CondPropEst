@@ -67,7 +67,7 @@ def dump_feat(queries, path):
         for query in queries:
             fout.write('qid:{}'.format(query._qid))
             for idx, val in enumerate(query._feat, start=1):
-                fout.write(' {}:{:.5f}'.format(idx, val))
+                fout.write(' {}:{}'.format(idx, val))
             fout.write('\n')
 
 class Query(object):

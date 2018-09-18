@@ -9,7 +9,7 @@ import argparse
 import numpy as np
 import scipy.optimize as opt
 from ..lib.data_utils import Query, load_log, load_prop
-from ..lib.utils import makedirs, _MSE
+from ..lib.utils import makedirs, avg_rel_err
 from collections import defaultdict, Counter
 
 def likelihood(p, r, c, not_c, M):
@@ -37,9 +37,9 @@ if __name__ == '__main__':
         para_ = np.load(model_para_path)
         N = prop.shape[0]
         prop_ = np.tile(para_, (N, 1))
-        test_mse = _MSE(prop, prop_)
-        test_prop_path = os.path.join(args.model_dir,
-                                    'test.prop.mse{:.5f}.txt'.format(test_mse))
+
+        print('Relative Error on test set: {}'.format(avg_rel_err(prop, prop_)))
+        test_prop_path = os.path.join(args.model_dir, 'set1.test.prop.txt')
 
         np.savetxt(test_prop_path, prop_, fmt='%.18f')
     else:
@@ -119,6 +119,10 @@ if __name__ == '__main__':
         makedirs(args.model_dir)
         model_para_path = os.path.join(args.model_dir, 'para.npy')
         np.save(model_para_path, prop_)
+
+        gt_path = os.path.join(args.gt_dir, 'set1bin.train.prop.txt')
+        prop = load_prop(gt_path)
+        print('Relative Error on training set: {}'.format(avg_rel_err(prop, prop_)))
 
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

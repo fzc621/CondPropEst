@@ -12,7 +12,6 @@ import scipy.optimize as opt
 from ..lib.data_utils import Query, load_feat, load_prop
 from ..lib.utils import makedirs, _MSE
 from collections import defaultdict, Counter
-import matplotlib.pyplot as plt
 
 def likelihood(theta, r, X, c, not_c, M):
     a = np.dot(X, theta).reshape(-1, 1)
@@ -50,22 +49,6 @@ if __name__ == '__main__':
         p_ = 1 / (a * rk + 1)
         p_ = p_ / p_[:,0].reshape(-1,1)
 
-        # diff = np.abs(p_ - p)
-        # rel_diff = diff / p_
-        # 
-        # plt.figure(figsize=(10,10))
-        # plt.subplot(211)
-        # for i in range(10):
-        #     plt.plot(diff[:100, i], label='p_{}'.format(i + 1))
-        # plt.legend()
-        # plt.title('Absolute Difference (|1/p_ - 1/p|)')
-        # plt.subplot(212)
-        # for i in range(10):
-        #     plt.plot(rel_diff[:100, i], label='p_{}'.format(i + 1))
-        # plt.legend()
-        # plt.title('Relative Difference (|1/p_ - 1/p|/(1/p))')
-        # plt.savefig(os.path.join(args.model_dir, 'diff.pdf'))
-        #
         test_mse = _MSE(p, p_)
         test_prop_path = os.path.join(args.model_dir,
                                     'test.prop.mse{:.3f}.txt'.format(test_mse))
