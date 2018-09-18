@@ -13,22 +13,24 @@ def makedirs(dirname):
 def prob_test(prob):
     return random.random() <= prob
 
-def read_para(path, dim):
+def read_para(path, dim, range):
     if os.path.exists(path):
         with open(path, 'r') as fin:
             w = np.loadtxt(fin)
-    else:
-        w_ = np.random.uniform(-0.1, 0.1, dim)
-        w = w_ - np.mean(w_)
-        makedirs(os.path.dirname(path))
-        np.savetxt(path, w)
+            if w[0] == range:
+                return w[1:]
+    w_ = np.random.uniform(-range, range, dim)
+    w = w_ - np.mean(w_)
+    print('norm(w) = {}'.format(np.linalg.norm(w)))
+    makedirs(os.path.dirname(path))
+    x = np.hstack((range, w))
+    np.savetxt(path, x)
     return w
 
 def cal_prob(w, x, r, method):
     if method == 'power':
         eta = np.dot(w, x) + 1
-        if eta < -1:
-            print(eta)
+        assert eta >= 0
         return pow(1 / r, eta)
     elif method == 'exp':
         # exponential function

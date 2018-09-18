@@ -17,6 +17,8 @@ if __name__ == '__main__':
         help='#dimension of feature')
     parser.add_argument('-m', choices=['exp', 'power', 'comp'],
         help='simulation function')
+    parser.add_argument('-w', type=float,
+        help='weight range')
     parser.add_argument('para_path', help='func parameter path')
     parser.add_argument('feat_path', help='feature path')
     parser.add_argument('prop_path', help='query propensity path')
@@ -28,7 +30,8 @@ if __name__ == '__main__':
     queries = load_feat(args.feat_path)
     M = args.n
     D = args.d
-    w = read_para(args.para_path, D)
+    r = args.w
+    w = read_para(args.para_path, D, r)
     makedirs(os.path.dirname(args.prop_path))
     with open(args.prop_path, 'w') as fout:
         for query in queries:
