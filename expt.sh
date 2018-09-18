@@ -44,6 +44,7 @@ res_dir="${expt_dir}/result"
 ground_truth_dir="${expt_dir}/ground_truth_$func"
 NPY_DIR="${expt_dir}/data"
 
+mkdir -p ${DATA_DIR}
 cp ${DATASET_DIR}/set1bin.test.txt ${DATA_DIR}
 $python -m src.sample_slice -o $ol "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
 $python -m src.sim_feat ${DATA_DIR} $DATA_DIR
