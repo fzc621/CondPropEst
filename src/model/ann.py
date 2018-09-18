@@ -81,7 +81,7 @@ if __name__ == '__main__':
             p_, test_err = sess.run([model.norm_p_, model.err],
                                     feed_dict={model.x:X_test, model.p:Y_test})
             print('Relative Error on test set: {}'.format(test_err))
-            test_prop_path = os.path.join(args.model_dir, 'set1.test.prop.txt')
+            test_prop_path = os.path.join(args.model_dir, 'set1bin.test.prop.txt')
             np.savetxt(test_prop_path, p_, fmt='%.18f')
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

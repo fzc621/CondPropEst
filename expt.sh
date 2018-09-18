@@ -21,14 +21,12 @@ else
   DATA_DIR="data/set1bin_${func}/input"
 fi
 
-if [[ "$2" == "overlap" ]]; then
-  ol="$3"
+if [[ "$2" == "weight" ]]; then
+  w="$3"
   sw="5"
 elif [[ "$2" == "sweep" ]]; then
-  ol="0.2"
   sw="$3"
 else
-  ol="0.2"
   sw="5"
 fi
 
@@ -46,7 +44,7 @@ NPY_DIR="${expt_dir}/data"
 
 # mkdir -p ${DATA_DIR}
 # cp ${DATASET_DIR}/set1bin.test.txt ${DATA_DIR}
-# $python -m src.sample_slice -o $ol "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
+# $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
 # $python -m src.sim_feat ${DATA_DIR} $DATA_DIR
 #
 # # === ground truth ===

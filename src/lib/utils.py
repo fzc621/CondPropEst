@@ -3,6 +3,7 @@
 import os
 import sys
 import random
+import parse
 import numpy as np
 
 def makedirs(dirname):
@@ -39,3 +40,9 @@ def cal_prob(w, x, r, method):
 
 def avg_rel_err(p, p_):
     return np.mean(np.absolute(1 - p / p_))
+
+def read_test_err(path):
+    with open(path) as fin:
+        line = fin.readline().rstrip()
+        err = parse.parse('Relative Error on test set: {}', line)
+        return float(err[0])
