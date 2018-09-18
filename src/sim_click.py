@@ -21,6 +21,7 @@ if __name__ == '__main__':
                         help='the prob of users click on a irrelevant result')
     parser.add_argument('-m', choices=['exp', 'power', 'comp'],
         help='simulation function')
+    parser.add_argument('-w', type=float, help='weight range')
     parser.add_argument('para_path', help='func parameter path')
     parser.add_argument('data_path', help='data path')
     parser.add_argument('score_path', help='score path')
@@ -49,7 +50,7 @@ if __name__ == '__main__':
             doc_id = len(queries[idx]._docs)
             queries[idx].append((doc_id, score, rel))
 
-    w = read_para(args.para_path, args.d)
+    w = read_para(args.para_path, args.d, args.w)
     makedirs(os.path.dirname(args.log_path))
     with open(args.log_path, 'w') as fout:
         for i in range(args.sweep):

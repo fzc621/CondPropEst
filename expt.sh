@@ -61,7 +61,7 @@ do
   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
   $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
       "${expt_dir}/score${i}.dat"
-  $python -m src.sim_click -s $sw -m $func -d 10 "${ground_truth_dir}/para.dat" \
+  $python -m src.sim_click -s $sw -m $func -d 10 -w $w "${ground_truth_dir}/para.dat" \
     "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/score${i}.dat" \
     "${DATA_DIR}/set1bin.train.feat.txt" "${log_dir}/log${i}.txt"
 done
