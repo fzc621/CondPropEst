@@ -70,18 +70,21 @@ NPY_DIR="${expt_dir}/data"
 
 # === w/o cond ===
 model_dir="${res_dir}/wo_cond"
+mkdir -p ${model_dir}
 echo 'Estimating without query feature'
 $python -m src.model.wo_cond -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
 $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 #
 # === recover ===
 model_dir="${res_dir}/recover_$func"
+mkdir -p ${model_dir}
 echo 'Recovering...'
 $python -m src.model.recover_$func -m 10 -d 10 --gt_dir ${ground_truth_dir} ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
 $python -m src.model.recover_$func --test --gt_dir ${ground_truth_dir} ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
 # === mlp ===
 model_dir="${res_dir}/ann/mlp"
+mkdir -p ${model_dir}
 # echo 'Estimating with Multilayer Perception...'
 # $python -m src.model.ann -m 10 -d 10 -e 500 mlp ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}
 # $python -m src.model.ann --test --gt_dir ${ground_truth_dir} mlp \
@@ -89,6 +92,7 @@ model_dir="${res_dir}/ann/mlp"
 
 # === mlp best func ===
 model_dir="${res_dir}/ann/mlp_${func}_best"
+mkdir -p ${model_dir}
 echo 'Estimating with Best Multilayer Perception...'
 $python -m src.model.ann -m 10 -d 10 -e 500 mlp_${func}_best ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir} > "${model_dir}/train.txt"
 $python -m src.model.ann --test --gt_dir ${ground_truth_dir} mlp_${func}_best \
