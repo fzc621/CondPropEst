@@ -26,10 +26,10 @@ if [[ "$2" == "weight" ]]; then
   sw="5"
 elif [[ "$2" == "sweep" ]]; then
   sw="$3"
-  w="0.1"
+  w="0.07"
 else
   sw="5"
-  w="0.1"
+  w="0.07"
 fi
 
 echo ${expt_dir}
