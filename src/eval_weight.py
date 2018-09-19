@@ -53,11 +53,11 @@ if __name__ == '__main__':
     mlp_metric_df.to_csv(os.path.join(args.weight_dir, 'mlp_result.csv'), float_format='%.6f')
 
     plt.figure()
+    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', yerr=mlp_metric_df.loc['std'])
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'])
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', ls='-.', yerr=mlp_metric_df.loc['std'])
     plt.xticks(columns, columns)
     plt.legend()
-    plt.xlabel('Half Range of ||W||')
+    plt.xlabel('Differences between Propensities')
     plt.ylabel('Relative Error')
     plt.savefig(os.path.join(args.weight_dir, 'weight.pdf'))
 
