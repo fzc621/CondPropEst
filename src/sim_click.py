@@ -11,7 +11,7 @@ from .lib.utils import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='simulate the clicks')
-    parser.add_argument('-s', '--sweep', default=5, type=int,
+    parser.add_argument('-s', '--sweep', default=5, type=float
                         help='#sweeps of the dataset')
     parser.add_argument('-d', default=10, type=int,
         help='#dimension of feature')
@@ -53,8 +53,31 @@ if __name__ == '__main__':
     w = read_para(args.para_path, args.d, args.w)
     makedirs(os.path.dirname(args.log_path))
     with open(args.log_path, 'w') as fout:
-        for i in range(args.sweep):
-            for query in queries:
+        if args.sweep >= 1:
+            sweep = int(args.sweep)
+            for i in range(sweep):
+                for query in queries:
+                    qid = query._qid
+                    feat = query._feat
+                    docs = sorted(query._docs, key=lambda x: x[1], reverse=True)
+                    for rk, sr in enumerate(docs, start=1):
+                        doc_id, _, rel = sr
+                        pr = cal_prob(w, feat, rk, args.m)
+                        clicked = False
+                        if prob_test(pr):
+                            if rel:
+                                if prob_test(ep):
+                                    clicked = True
+                            else:
+                                if prob_test(en):
+                                    clicked = True
+                        if clicked:
+                            fout.write('{} qid:{} {}\n'.format(1, qid, doc_id))
+                        else:
+                            fout.write('{} qid:{} {}\n'.format(0, qid, doc_id))
+        else:
+            num = int(args.sweep * len(queries))
+            for query in queries[:num]:
                 qid = query._qid
                 feat = query._feat
                 docs = sorted(query._docs, key=lambda x: x[1], reverse=True)
