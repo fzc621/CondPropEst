@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     params = [c for c in os.scandir(args.sweep_dir)
                 if not c.name.startswith('.') and c.is_dir()]
-    columns = sorted([int(c.name) for c in params], key=float)
+    columns = sorted([c.name for c in params], key=float)
     # columns = sorted([c.name for c in params], key=float)
     k = args.k
     wo_metric = {}
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'])
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', ls='-.', yerr=mlp_metric_df.loc['std'])
+    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', yerr=mlp_metric_df.loc['std'])
     plt.xticks(columns, columns)
     plt.legend()
     plt.xlabel('Amount of Logged Data')
