@@ -11,7 +11,7 @@ from .lib.utils import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='simulate the clicks')
-    parser.add_argument('-s', '--sweep', default=5, type=float
+    parser.add_argument('-s', '--sweep', default=5, type=float,
                         help='#sweeps of the dataset')
     parser.add_argument('-d', default=10, type=int,
         help='#dimension of feature')
