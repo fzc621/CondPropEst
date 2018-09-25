@@ -39,7 +39,7 @@ if __name__ == '__main__':
         prop_ = np.tile(para_, (N, 1))
 
         print('Relative Error on test set: {}'.format(avg_rel_err(prop, prop_)))
-        test_prop_path = os.path.join(args.model_dir, 'set1.test.prop.txt')
+        test_prop_path = os.path.join(args.model_dir, 'set1bin.test.prop.txt')
 
         np.savetxt(test_prop_path, prop_, fmt='%.18f')
     else:

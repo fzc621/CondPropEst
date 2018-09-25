@@ -77,6 +77,7 @@ class Query(object):
         self._feat = feat
         self._prop = prop
         self._docs = []
+        self._inited = False
         if not doc is None:
             self._docs.append(doc)
 
@@ -86,3 +87,13 @@ class Query(object):
 
     def equal_qid(self, qid):
         return qid == self._qid
+
+    def get_rel_cnt(self):
+        if not self._inited:
+            self._inited = True
+            self._rel_cnt = 0
+            for doc in self._docs:
+                if doc[0] == 1:
+                    self._rel_cnt += 1
+
+        return self._rel_cnt
