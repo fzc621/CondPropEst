@@ -46,7 +46,7 @@ if __name__ == '__main__':
         elif args.model == 'mlp_power_best':
             model = mlp_power_best.MLP(D, M)
         elif args.model == 'mlp_rel':
-            model = mlp_rel.MLP(D, M, args.n)
+            model = mlp_rel.MLP(D, M, args.number)
         if not args.test:
             click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
             c, not_c = np.load(click_npy_path)
