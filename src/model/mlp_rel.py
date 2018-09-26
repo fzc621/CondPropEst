@@ -13,6 +13,7 @@ import tensorflow as tf
 
 l, h = 1e-6, 1 - 1e-6
 N1 = 12
+N2 = 128
 
 def prob_variable(shape):
     initial = tf.random_uniform(shape, minval=l, maxval=h)
@@ -33,21 +34,29 @@ class MLP(object):
         self.c = tf.placeholder(tf.float32, shape=(None, M, M))
         self.not_c = tf.placeholder(tf.float32, shape=(None, M, M))
 
-        with tf.variable_scope('fc1'):
+        with tf.variable_scope('p_fc1'):
             w_fc1 = weight_variable([D, N1])
             b_fc1 = bias_variable([N1])
             h_fc1 = tf.nn.sigmoid(tf.matmul(self.x, w_fc1) + b_fc1)
 
-        with tf.variable_scope('fc2'):
+        with tf.variable_scope('p_fc2'):
             w_fc2 = weight_variable([N1, M])
             b_fc2 = bias_variable([M])
             p_ = tf.nn.sigmoid(tf.matmul(h_fc1, w_fc2) + b_fc2)
 
-        r = prob_variable((M, M))
-        r_symm = tf.div(tf.add(r, tf.transpose(r)), 2.0)
-        clip_r = tf.clip_by_value(r_symm, clip_value_min=l, clip_value_max=h)
+        with tf.variable_scope('rel_fc3'):
+            w_fc3 = weight_variable([D, N2])
+            b_fc3 = bias_variable([N2])
+            h_fc3 = tf.nn.sigmoid(tf.matmul(self.x, w_fc3) + b_fc3)
 
-        self.pr = tf.reshape(p_,[-1, M, 1]) * clip_r
+        with tf.variable_scope('rel_fc4'):
+            w_fc4 = weight_variable([N2, M * M])
+            b_fc4 = bias_variable([M * M])
+            r_ = tf.reshape(tf.nn.sigmoid(tf.matmul(h_fc3, w_fc4) + b_fc4), (-1, M, M))
+
+        r_symm = tf.div(tf.add(r_, tf.matrix_transpose(r_)), 2.0)
+
+        self.pr = tf.reshape(p_,(-1, M, 1)) * r_symm
         self.loss = -tf.reduce_sum(tf.add(self.c * tf.log(self.pr), self.not_c * tf.log(1 - self.pr)))
 
         self.norm_p_ = tf.div(p_, tf.reshape(p_[:,0], (-1, 1)))
