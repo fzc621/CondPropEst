@@ -11,9 +11,8 @@ run()
   fi
 }
 
-paras="8 16 32 64 128 256"
 
-for p in $paras; do
-	echo "#N2 = ${p}"
-	run "sh ./expt.sh $p"
+for i in $(seq 0 5); do
+	echo "Run = ${i}"
+	run "sh ./expt.sh power sweep 5 $i"
 done

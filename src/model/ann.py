@@ -9,7 +9,7 @@ import timeit
 import argparse
 import numpy as np
 import tensorflow as tf
-from . import mlp, mlp_power_best, mlp_rel
+from . import mlp, mlp_power_best, mlp_rel, mlp_rel_best
 from ..lib.data_utils import load_prop
 from ..lib.utils import makedirs
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         help='inference version')
     parser.add_argument('--test', action='store_true', help='train/test mode')
     parser.add_argument('--gt_dir', help='ground truth directory')
-    parser.add_argument('model', choices=['mlp', 'mlp_power_best', 'mlp_rel'])
+    parser.add_argument('model', choices=['mlp', 'mlp_power_best', 'mlp_rel', 'mlp_rel_best'])
     parser.add_argument('npy_dir', help='numpy dir')
     parser.add_argument('model_dir', help='model directory')
     args = parser.parse_args()
@@ -41,12 +41,7 @@ if __name__ == '__main__':
 
     makedirs(args.model_dir)
     with tf.Session() as sess:
-        if args.model == 'mlp':
-            model = mlp.MLP(D, M)
-        elif args.model == 'mlp_power_best':
-            model = mlp_power_best.MLP(D, M)
-        elif args.model == 'mlp_rel':
-            model = mlp_rel.MLP(D, M, args.number)
+        model = eval('{}.MLP(D, M)'.format(args.model))
         if not args.test:
             click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
             c, not_c = np.load(click_npy_path)
