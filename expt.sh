@@ -102,8 +102,9 @@ model_dir="${res_dir}/ann/mlp"
 model_dir="${res_dir}/ann/mlp_rel/$2"
 mkdir -p ${model_dir}
 echo 'Estimating with Multilayer Perception and Relevance Model...'
-$python -m src.model.ann -m 10 -d 10 -e 500 mlp_rel -n $2 ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}
-$python -m src.model.ann -n $2 --test --gt_dir ${ground_truth_dir} mlp_rel \
+echo "$python -m src.model.ann -m 10 -d 10 -e 500 mlp_rel -n $1 ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}"
+$python -m src.model.ann -m 10 -d 10 -e 500 mlp_rel -n $1 ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}
+$python -m src.model.ann -n $1 --test --gt_dir ${ground_truth_dir} mlp_rel \
 	${NPY_DIR} ${model_dir}
 
 # === mlp best func ===
