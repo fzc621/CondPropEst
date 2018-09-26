@@ -23,6 +23,8 @@ if __name__ == '__main__':
         help='dimension of feature')
     parser.add_argument('-e', '--epoch_num',default=600, type=int,
         help='#epoch')
+    parser.add_argument('-n', '--number', default=128, type=int,
+        help='number of hidden layer')
     parser.add_argument('-i', '--inference_version', default=0, type=int,
         help='inference version')
     parser.add_argument('--test', action='store_true', help='train/test mode')
@@ -44,7 +46,7 @@ if __name__ == '__main__':
         elif args.model == 'mlp_power_best':
             model = mlp_power_best.MLP(D, M)
         elif args.model == 'mlp_rel':
-            model = mlp_rel.MLP(D, M)
+            model = mlp_rel.MLP(D, M, args.n)
         if not args.test:
             click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
             c, not_c = np.load(click_npy_path)
