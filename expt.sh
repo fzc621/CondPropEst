@@ -99,7 +99,7 @@ model_dir="${res_dir}/ann/mlp"
 # 	${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
 # === mlp with relevance model ===
-model_dir="${res_dir}/ann/mlp_rel/$2"
+model_dir="${res_dir}/ann/mlp_rel/$1"
 mkdir -p ${model_dir}
 echo 'Estimating with Multilayer Perception and Relevance Model...'
 echo "$python -m src.model.ann -m 10 -d 10 -e 500 mlp_rel -n $1 ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}"
