@@ -29,10 +29,10 @@ if [[ "$2" == "weight" ]]; then
   sw="5"
 elif [[ "$2" == "sweep" ]]; then
   sw="$3"
-  w="0.08"
+  w="0.1"
 else
   sw="5"
-  w="0.08"
+  w="0.1"
 fi
 
 DATASET_DIR='../../dataset/set1bin'
@@ -48,7 +48,19 @@ NPY_DIR="${expt_dir}/data"
 mkdir -p ${DATA_DIR}
 cp ${DATASET_DIR}/set1bin.test.txt ${DATA_DIR}
 $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
-$python -m src.sim_feat ${DATA_DIR} $DATA_DIR
+
+
+for i in 0 1;
+do
+  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
+  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
+      "${expt_dir}/train.score${i}.dat"
+  $svm_classify "${DATA_DIR}/set1bin.test.txt" "${expt_dir}/rank${i}.dat" \
+      "${expt_dir}/test.score${i}.dat"
+done
+
+$python -m src.sim_feat "${expt_dir}/train.score0.dat" "${expt_dir}/train.score1.dat" "${DATA_DIR}/set1bin.train.txt" $DATA_DIR
+$python -m src.sim_feat "${expt_dir}/test.score0.dat" "${expt_dir}/test.score1.dat" "${DATA_DIR}/set1bin.test.txt" $DATA_DIR
 
 $python -m src.cal_prop -n 10 -d 10 -m $func -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
   "${ground_truth_dir}/set1bin.train.prop.txt"
@@ -58,22 +70,12 @@ $python -m src.cal_prop -n 10 -d 10 -m $func -w $w "${ground_truth_dir}/para.dat
 echo 'Start to generate click logs...'
 for i in 0 1;
 do
-  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
-  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
-      "${expt_dir}/score${i}.dat"
   $python -m src.sim_click -s $sw -m $func -d 10 -w $w "${ground_truth_dir}/para.dat" \
-    "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/score${i}.dat" \
+    "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score${i}.dat" \
     "${DATA_DIR}/set1bin.train.feat.txt" "${log_dir}/log${i}.txt"
 done
 
 $python -m src.data_process -m 10 -d 10 ${log_dir} ${DATA_DIR} ${NPY_DIR}
-
-# === w/o cond global ===
-model_dir="${res_dir}/wo_cond_global"
-# mkdir -p ${model_dir}
-# echo 'Estimating without query feature with gloabl click rate'
-# $python -m src.model.wo_cond_global -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
-# $python -m src.model.wo_cond_global --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 
 # === w/o cond ===
 model_dir="${res_dir}/wo_cond"
