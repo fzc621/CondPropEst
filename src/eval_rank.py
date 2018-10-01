@@ -34,7 +34,7 @@ if __name__ == '__main__':
         run_dir = os.path.join(args.sweep_dir, '{}'.format(i))
         gt_path = os.path.join(run_dir, 'ground_truth_power/set1bin.test.prop.txt')
         gt = load_prop(gt_path)
-        est_path = os.path.join(run_dir, 'result/ann/mlp_power_best/set1bin.test.prop.txt')
+        est_path = os.path.join(run_dir, 'result/ann/mlp_best_rel/set1bin.test.prop.txt')
         est = np.loadtxt(est_path)
         for col in columns:
             k = col - 1

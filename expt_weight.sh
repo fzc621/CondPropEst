@@ -11,13 +11,13 @@ run()
   fi
 }
 
-weights="0.01 0.03 0.05 0.07 0.09"
+weights="0.02 0.04 0.06 0.08"
 
 for s in $weights; do
-  for i in $(seq 0 5); do
+  for i in $(seq 0 7); do
   	echo "#Sweep = ${s} Run = ${i}"
   	run "sh ./expt.sh power weight $s $i"
   done
 done
 
-python -m src.eval_weight -k 6 data/set1bin_power/expt/weight
+# python -m src.eval_weight -k 6 data/set1bin_power/expt/weight
