@@ -49,7 +49,7 @@ mkdir -p ${DATA_DIR}
 cp ${DATASET_DIR}/set1bin.test.txt ${DATA_DIR}
 $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
 
-
+mkdir -p ${expt_dir}
 for i in 0 1;
 do
   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" "${expt_dir}/rank${i}.dat"
