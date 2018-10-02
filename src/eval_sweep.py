@@ -71,7 +71,7 @@ if __name__ == '__main__':
     plt.ylabel('Relative Error')
     plt.savefig(os.path.join(args.sweep_dir, 'rel.pdf'))
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'])
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', yerr=mlp_metric_df.loc['std'])
+    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/o relevance', yerr=mlp_metric_df.loc['std'])
     plt.legend()
     plt.savefig(os.path.join(args.sweep_dir, 'sweep.pdf'))
 

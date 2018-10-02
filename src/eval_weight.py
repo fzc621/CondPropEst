@@ -26,9 +26,11 @@ if __name__ == '__main__':
     k = args.k
     wo_metric = {}
     mlp_metric = {}
+    rel_metric = {}
     for col in columns:
         wo_metric[col] = {}
         mlp_metric[col] = {}
+        rel_metric[col] = {}
         for i in range(k):
             run_key = '#{}'.format(i)
             run_dir = os.path.join(args.weight_dir, '{}/{}'.format(col, i))
@@ -39,8 +41,12 @@ if __name__ == '__main__':
             mlp_err_path = os.path.join(run_dir,
                         'result/ann/mlp_power_best/test.txt')
             mlp_err = read_test_err(mlp_err_path)
+            rel_err_path = os.path.join(run_dir,
+                        'result/ann/mlp_best_rel/test.txt')
+            rel_err = read_test_err(rel_err_path)
             wo_metric[col][run_key] = wo_err
             mlp_metric[col][run_key] = mlp_err
+            rel_metric[col][run_key] = rel_err
 
     wo_metric_df = pd.DataFrame(wo_metric, columns=columns, dtype='float64')
     wo_metric_df.loc['avg'] = wo_metric_df.mean()
@@ -52,9 +58,15 @@ if __name__ == '__main__':
     mlp_metric_df.loc['std'] = mlp_metric_df.std()
     mlp_metric_df.to_csv(os.path.join(args.weight_dir, 'mlp_result.csv'), float_format='%.6f')
 
+    rel_metric_df = pd.DataFrame(rel_metric, columns=columns, dtype='float64')
+    rel_metric_df.loc['avg'] = rel_metric_df.mean()
+    rel_metric_df.loc['std'] = rel_metric_df.std()
+    rel_metric_df.to_csv(os.path.join(args.weight_dir, 'rel_result.csv'), float_format='%.6f')
+
     plt.figure()
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/ features', yerr=mlp_metric_df.loc['std'])
+    plt.errorbar(columns, rel_metric_df.loc['avg'], label='w/ relevance', yerr=rel_metric_df.loc['std'])
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'])
+    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/o relevance', yerr=mlp_metric_df.loc['std'])
     plt.xticks(columns, columns)
     plt.legend()
     plt.xlabel('Differences between Propensities')
