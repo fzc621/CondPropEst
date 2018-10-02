@@ -12,7 +12,7 @@ import tensorflow as tf
 
 
 l, h = 1e-6, 1 - 1e-6
-N1 = 12
+N1 = 9
 
 def prob_variable(shape):
     initial = tf.random_uniform(shape, minval=l, maxval=h)

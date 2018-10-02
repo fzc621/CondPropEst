@@ -93,20 +93,20 @@ model_dir="${res_dir}/recover_$func"
 # $python -m src.model.recover_$func --test --gt_dir ${ground_truth_dir} ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
 # === mlp ===
-model_dir="${res_dir}/ann/mlp/$1"
-mkdir -p ${model_dir}
-echo "Estimating with Multilayer Perception (N1 = $1)..."
-$python -m src.model.ann -m 10 -d 10 -e 500 -n $1 mlp ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir} > "${model_dir}/train.txt"
-$python -m src.model.ann -n $1 --test --gt_dir ${ground_truth_dir} mlp \
-	${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+model_dir="${res_dir}/ann/mlp"
+# mkdir -p ${model_dir}
+# echo "Estimating with Multilayer Perception ..."
+# $python -m src.model.ann -m 10 -d 10 -e 500 -n $1 mlp ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir} > "${model_dir}/train.txt"
+# $python -m src.model.ann -n $1 --test --gt_dir ${ground_truth_dir} mlp \
+# 	${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
 # === mlp with relevance model ===
-model_dir="${res_dir}/ann/mlp_rel"
-# mkdir -p ${model_dir}
-# echo 'Estimating with Multilayer Perception and Relevance Model...'
-# $python -m src.model.ann -m 10 -d 10 -e 500 mlp_rel ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}  > "${model_dir}/train.txt"
-# $python -m src.model.ann --test --gt_dir ${ground_truth_dir} mlp_rel \
-# 	${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+model_dir="${res_dir}/ann/mlp_rel/$1"
+mkdir -p ${model_dir}
+echo 'Estimating with Multilayer Perception and Relevance Model...'
+$python -m src.model.ann -m 10 -d 10 -e 500 -n $1 mlp_rel ${NPY_DIR} ${model_dir} --gt_dir ${ground_truth_dir}  > "${model_dir}/train.txt"
+$python -m src.model.ann -n $1 --test --gt_dir ${ground_truth_dir} mlp_rel \
+	${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
 # # === mlp best func ===
 # model_dir="${res_dir}/ann/mlp_${func}_best"
