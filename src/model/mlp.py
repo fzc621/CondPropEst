@@ -12,7 +12,6 @@ import tensorflow as tf
 
 
 l, h = 1e-6, 1 - 1e-6
-N1 = 12 #power:12 exp:16
 N2 = 12
 
 def prob_variable(shape):
@@ -31,7 +30,7 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 class MLP(object):
-    def __init__(self, D, M, learning_rate=3e-2):
+    def __init__(self, D, M, N1=12, learning_rate=3e-2):
         self.x = tf.placeholder(tf.float32, shape=(None, D))
         self.p = tf.placeholder(tf.float32, shape=(None, M))
         self.c = tf.placeholder(tf.float32, shape=(None, M, M))

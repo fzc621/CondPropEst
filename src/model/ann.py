@@ -41,7 +41,10 @@ if __name__ == '__main__':
 
     makedirs(args.model_dir)
     with tf.Session() as sess:
-        model = eval('{}.MLP(D, M)'.format(args.model))
+        if args.model == 'mlp':
+            model = mlp.MLP(D, M, args.number)
+        else:
+            model = eval('{}.MLP(D, M)'.format(args.model))
         if not args.test:
             click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
             c, not_c = np.load(click_npy_path)
