@@ -59,7 +59,7 @@ if __name__ == '__main__':
                 tf.global_variables_initializer().run()
 
             best_err = math.inf
-            for epoch in range(100):
+            for epoch in range(1000):
                 train_loss, train_err, _ = sess.run([model.loss, model.err, model.train_op],
                          feed_dict={model.x:X_train, model.p:Y_train, model.c:train_c, model.not_c: train_not_c})
                 if train_err < best_err:

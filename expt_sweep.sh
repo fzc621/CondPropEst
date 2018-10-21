@@ -14,7 +14,7 @@ run()
 sweeps="0.01 0.1 0.2 0.5 0.7 1 2 5 10 20"
 
 for s in $sweeps; do
-  for i in $(seq 0 8); do
+  for i in $(seq 0 5); do
   	echo "#Sweep = ${s} Run = ${i}"
   	run "sh ./expt.sh sweep $s $i"
   done
