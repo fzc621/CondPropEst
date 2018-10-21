@@ -15,17 +15,14 @@ l, h = 1e-6, 1 - 1e-6
 N2 = 12
 
 def prob_variable(shape):
-    # initial = tf.constant(0.1, shape=shape)
     initial = tf.random_uniform(shape, minval=l, maxval=h)
     return tf.Variable(initial)
 
 def weight_variable(shape):
     initial = tf.constant(0.1, shape=shape)
-    # initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial)
 
 def bias_variable(shape):
-    # initial = tf.constant(0.1, shape=shape)
     initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial)
 
@@ -44,14 +41,7 @@ class MLP(object):
         with tf.variable_scope('fc2'):
             w_fc2 = weight_variable([N1, M])
             b_fc2 = bias_variable([M])
-            # h_fc2 = tf.nn.relu(tf.matmul(h_fc1, w_fc2) + b_fc2)
             p_ = tf.nn.sigmoid(tf.matmul(h_fc1, w_fc2) + b_fc2)
-
-        # with tf.variable_scope('fc3'):
-        #     w_fc3 = weight_variable([N2, M])
-        #     b_fc3 = bias_variable([M])
-        #     p_ = tf.nn.sigmoid(tf.matmul(h_fc2, w_fc3) + b_fc3)
-
 
         r = prob_variable((M, M))
         r_symm = tf.div(tf.add(r, tf.transpose(r)), 2.0)

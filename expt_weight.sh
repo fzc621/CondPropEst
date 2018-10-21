@@ -11,12 +11,12 @@ run()
   fi
 }
 
-weights="0.02 0.04 0.06 0.08"
+weights="0.02 0.04 0.06 0.08 0.1"
 
 for s in $weights; do
-  for i in $(seq 0 7); do
+  for i in $(seq 0 8); do
   	echo "#Sweep = ${s} Run = ${i}"
-  	run "sh ./expt.sh power weight $s $i"
+  	run "sh ./expt.sh weight $s $i"
   done
 done
 

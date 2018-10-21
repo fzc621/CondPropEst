@@ -12,7 +12,6 @@ import tensorflow as tf
 
 
 l, h = 1e-6, 1 - 1e-6
-N1 = 9
 
 def prob_variable(shape):
     initial = tf.random_uniform(shape, minval=l, maxval=h)
@@ -27,7 +26,7 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 class MLP(object):
-    def __init__(self, D, M, N2=11, learning_rate=3e-2):
+    def __init__(self, D, M, N1, N2, learning_rate=3e-2):
         self.x = tf.placeholder(tf.float32, shape=(None, D))
         self.p = tf.placeholder(tf.float32, shape=(None, M))
         self.c = tf.placeholder(tf.float32, shape=(None, M, M))

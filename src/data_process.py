@@ -19,6 +19,7 @@ if __name__ == '__main__':
         help='number of top positions for which estimates are desired')
     parser.add_argument('-d', default=10, type=int,
         help='dimension of feature')
+    parser.add_argument('data', help='train/test')
     parser.add_argument('log_dir', help='click log dir')
     parser.add_argument('data_dir', help='feature dir')
     parser.add_argument('npy_dir', help='numpy file dir')
@@ -27,12 +28,12 @@ if __name__ == '__main__':
     start = timeit.default_timer()
     M = args.m
     D = args.d
-    feat_path = os.path.join(args.data_dir, 'set1bin.train.feat.txt')
+    feat_path = os.path.join(args.data_dir, 'set1bin.{}.feat.txt'.format(args.data))
     feat_queries = load_feat(feat_path)
 
     N = len(feat_queries)
-    log0_path = os.path.join(args.log_dir, 'log0.txt')
-    log1_path = os.path.join(args.log_dir, 'log1.txt')
+    log0_path = os.path.join(args.log_dir, '{}.log0.txt'.format(args.data))
+    log1_path = os.path.join(args.log_dir, '{}.log1.txt'.format(args.data))
     log0 = load_log(log0_path)
     log1 = load_log(log1_path)
 
@@ -92,11 +93,9 @@ if __name__ == '__main__':
 
     train_queries = copy.deepcopy(feat_queries)
     c, not_c = np.zeros([N, M, M]), np.zeros([N, M, M])
-    X = []
     for idx, query in enumerate(train_queries):
         qid = query._qid
         feat = query._feat
-        X.append(feat)
         for k in range(M):
             for k_ in range(M):
                 if k == k_:
@@ -104,17 +103,18 @@ if __name__ == '__main__':
                 c[idx][k][k_] = c_cnt[(k + 1, k_ + 1, qid)]
                 not_c[idx][k][k_] = not_c_cnt[(k + 1, k_ + 1, qid)]
 
-    X = np.array(X)
-
     makedirs(args.npy_dir)
+    train_feat_path = os.path.join(args.data_dir, 'set1bin.train.feat.txt')
+    train_feat_queries = load_feat(train_feat_path)
+    X = np.array([q._feat for q in train_feat_queries])
     train_feat_npy_path = os.path.join(args.npy_dir, 'train.feat.npy')
     np.save(train_feat_npy_path, X)
 
-    # valid_feat_path = os.path.join(args.data_dir, 'set1bin.valid.feat.txt')
-    # valid_feat_queries = load_feat(valid_feat_path)
-    # Y = np.array([q._feat for q in valid_feat_queries])
-    # valid_feat_npy_path = os.path.join(args.npy_dir, 'valid.feat.npy')
-    # np.save(valid_feat_npy_path, Y)
+    valid_feat_path = os.path.join(args.data_dir, 'set1bin.valid.feat.txt')
+    valid_feat_queries = load_feat(valid_feat_path)
+    Y = np.array([q._feat for q in valid_feat_queries])
+    valid_feat_npy_path = os.path.join(args.npy_dir, 'valid.feat.npy')
+    np.save(valid_feat_npy_path, Y)
 
     test_feat_path = os.path.join(args.data_dir, 'set1bin.test.feat.txt')
     test_feat_queries = load_feat(test_feat_path)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     test_feat_npy_path = os.path.join(args.npy_dir, 'test.feat.npy')
     np.save(test_feat_npy_path, Z)
 
-    click_npy_path = os.path.join(args.npy_dir, 'click.info.npy')
+    click_npy_path = os.path.join(args.npy_dir, '{}.click.npy'.format(args.data))
     np.save(click_npy_path, (c, not_c))
 
     end = timeit.default_timer()

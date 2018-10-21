@@ -44,8 +44,8 @@ if __name__ == '__main__':
         np.savetxt(test_prop_path, prop_, fmt='%.18f')
     else:
         M = args.n
-        log0_path = os.path.join(args.log_dir, 'log0.txt')
-        log1_path = os.path.join(args.log_dir, 'log1.txt')
+        log0_path = os.path.join(args.log_dir, 'train.log0.txt')
+        log1_path = os.path.join(args.log_dir, 'train.log1.txt')
         log0 = load_log(log0_path)
         log1 = load_log(log1_path)
 

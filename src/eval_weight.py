@@ -39,10 +39,10 @@ if __name__ == '__main__':
                         'result/wo_cond/test.txt')
             wo_err = read_test_err(wo_err_path)
             mlp_err_path = os.path.join(run_dir,
-                        'result/ann/mlp_power_best/test.txt')
+                        'result/mlp_power_best/test.txt')
             mlp_err = read_test_err(mlp_err_path)
             rel_err_path = os.path.join(run_dir,
-                        'result/ann/mlp_best_rel/test.txt')
+                        'result/mlp_best_rel/test.txt')
             rel_err = read_test_err(rel_err_path)
             wo_metric[col][run_key] = wo_err
             mlp_metric[col][run_key] = mlp_err
