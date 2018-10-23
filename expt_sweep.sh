@@ -19,7 +19,3 @@ for s in $sweeps; do
   	run "sh ./expt.sh sweep $s $i"
   done
 done
-
-# python -m src.eval_sweep -k 6 data/set1bin_power/expt/sweep
-
-# python -m src.eval_rank -k 6 -m 10 data/set1bin_power/expt/rank

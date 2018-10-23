@@ -43,8 +43,36 @@ def cal_prob(w, x, r, method):
 def avg_rel_err(p, p_):
     return np.mean(np.absolute(1 - p / p_))
 
-def read_test_err(path):
+def read_err(dir, dataset):
+    path = os.path.join(dir, '{}.txt'.format(dataset))
     with open(path) as fin:
         line = fin.readline().rstrip()
-        err = parse.parse('Relative Error on test set: {}', line)
+        err = parse.parse('Relative Error on {} set: '.format(dataset) + '{}', line)
         return float(err[0])
+
+def find_best_prop_model(dir):
+    best_path = None
+    best_err = 10e99
+    for n in os.listdir(dir):
+        if not n.startswith('.'):
+            path = os.path.join(dir, n)
+            err = read_err(path, 'valid')
+            if err < best_err:
+                best_err = err
+                best_path = path
+    return best_path
+
+def find_best_rel_model(dir):
+    best_path = None
+    best_err = 10e99
+    for n1 in os.listdir(dir):
+        if not n1.startswith('.'):
+            n1_path = os.path.join(dir, n1)
+            for n2 in os.listdir(n1_path):
+                if not n2.startswith('.'):
+                    path = os.path.join(n1_path, n2)
+                    err = read_err(path, 'valid')
+                    if err < best_err:
+                        best_err = err
+                        best_path = path
+    return best_path

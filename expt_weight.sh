@@ -19,5 +19,3 @@ for s in $weights; do
   	run "sh ./expt.sh weight $s $i"
   done
 done
-
-# python -m src.eval_weight -k 6 data/set1bin_power/expt/weight

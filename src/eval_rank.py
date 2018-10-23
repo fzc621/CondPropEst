@@ -7,8 +7,9 @@ import pandas as pd
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
+plt.style.use('classic')
 from .lib.data_utils import load_prop
-from .lib.utils import avg_rel_err
+from .lib.utils import avg_rel_err, find_best_rel_model
 
 
 if __name__ == '__main__':
@@ -32,9 +33,10 @@ if __name__ == '__main__':
     for i in range(k):
         run_key = '#{}'.format(i)
         run_dir = os.path.join(args.sweep_dir, '{}'.format(i))
-        gt_path = os.path.join(run_dir, 'ground_truth_power/set1bin.test.prop.txt')
+        gt_path = os.path.join(run_dir, 'ground_truth/set1bin.test.prop.txt')
         gt = load_prop(gt_path)
-        est_path = os.path.join(run_dir, 'result/ann/mlp_best_rel/set1bin.test.prop.txt')
+        est_dir = find_best_rel_model(os.path.join(run_dir, 'result/mlp_rel'))
+        est_path = os.path.join(est_dir, 'set1bin.test.prop.txt')
         est = np.loadtxt(est_path)
         for col in columns:
             k = col - 1
@@ -48,11 +50,13 @@ if __name__ == '__main__':
     metric_df.to_csv(os.path.join(args.sweep_dir, 'rank.csv'), float_format='%.6f')
 
     plt.figure()
-    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'])
+    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'], fmt='bo-')
     plt.xticks(columns, columns)
     plt.xlabel('Position')
     plt.ylabel('Relative Error')
-    plt.savefig(os.path.join(args.sweep_dir, 'rank.pdf'))
+    x0, x1, y0, y1 = plt.axis()
+    plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))
+    plt.savefig(os.path.join(args.sweep_dir, 'rank.eps'))
 
     end = timeit.default_timer()
     print('Runing time: {:.3f}s.'.format(end - start))
