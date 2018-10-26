@@ -65,7 +65,7 @@ if __name__ == '__main__':
     rel_metric_df.to_csv(os.path.join(args.weight_dir, 'rel_result.csv'), float_format='%.6f')
 
     plt.figure()
-    plt.xlabel('Differences between Propensities')
+    plt.xlabel('Strength of Context Dependence')
     plt.ylabel('Relative Error')
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'], fmt='3-.')
     plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/o relevance', yerr=mlp_metric_df.loc['std'], fmt='x--')

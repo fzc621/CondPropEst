@@ -23,8 +23,7 @@ if __name__ == '__main__':
     params = [c for c in os.scandir(args.sweep_dir)
                 if not c.name.startswith('.') and c.is_dir()]
     columns = sorted([c.name for c in params], key=float)
-    float_columns = list(map(float, columns))
-    # columns = sorted([c.name for c in params], key=float)
+    num_columns = [int(float(s) * 19745) for s in columns]
     k = args.k
     wo_metric = {}
     mlp_metric = {}
@@ -66,13 +65,13 @@ if __name__ == '__main__':
     rel_metric_df.to_csv(os.path.join(args.sweep_dir, 'rel_result.csv'), float_format='%.6f')
 
     plt.figure()
-    plt.xlabel('Amount of Logged Data')
+    plt.xlabel('#Training Samples')
     plt.ylabel('Relative Error')
     plt.errorbar(columns, wo_metric_df.loc['avg'], label='w/o features', yerr=wo_metric_df.loc['std'], fmt='3-.')
     plt.errorbar(columns, mlp_metric_df.loc['avg'], label='w/o relevance', yerr=mlp_metric_df.loc['std'], fmt='x--')
     plt.errorbar(columns, rel_metric_df.loc['avg'], label='w/ relevance', yerr=rel_metric_df.loc['std'], fmt='+-')
     plt.legend(frameon=False)
-    plt.xticks(columns, columns)
+    plt.xticks(columns, num_columns)
     x0, x1, y0, y1 = plt.axis()
     plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))
     plt.savefig(os.path.join(args.sweep_dir, 'sweep.eps'))
