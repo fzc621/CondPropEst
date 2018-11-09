@@ -3,7 +3,7 @@
 set -e
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  python="/home/zf94/anaconda3/envs/tf/bin/python"
+  python="/home/$(whoami)/anaconda3/envs/tf/bin/python"
 else
   python="/Users/ezail/anaconda3/bin/python"
 fi
