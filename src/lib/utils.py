@@ -29,8 +29,7 @@ def read_para(path, dim, range):
 
 def cal_prob(w, x, r, method):
     if method == 'power':
-        eta = np.dot(w, x) + 1
-        assert eta >= 0
+        eta = max(np.dot(w, x) + 1, 0)
         return pow(1 / r, eta)
     elif method == 'exp':
         # exponential function

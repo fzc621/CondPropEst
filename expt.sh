@@ -58,28 +58,12 @@ $python -m src.sim_feat "${DATA_DIR}/set1bin.train.txt" $DATA_DIR
 $python -m src.sim_feat "${DATASET_DIR}/set1bin.valid.txt" $DATA_DIR
 $python -m src.sim_feat "${DATASET_DIR}/set1bin.test.txt" $DATA_DIR
 
-set +e
-
-while true; do
-  [ -f "${ground_truth_dir}/para.dat" ] && rm "${ground_truth_dir}/para.dat"
-  $python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
-    "${ground_truth_dir}/set1bin.train.prop.txt"
-  if [[ $? -ne 0 ]]; then
-    continue
-  fi
-  $python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.valid.feat.txt" \
-    "${ground_truth_dir}/set1bin.valid.prop.txt"
-  if [[ $? -ne 0 ]]; then
-    continue
-  fi
-  $python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.test.feat.txt" \
-    "${ground_truth_dir}/set1bin.test.prop.txt"
-  if [[ $? -eq 0 ]]; then
-    break
-  fi
-done
-
-set -e
+$python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.train.feat.txt" \
+  "${ground_truth_dir}/set1bin.train.prop.txt"
+$python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.valid.feat.txt" \
+  "${ground_truth_dir}/set1bin.valid.prop.txt"
+$python -m src.cal_prop -n 10 -d 10 -m power -w $w "${ground_truth_dir}/para.dat" "${DATA_DIR}/set1bin.test.feat.txt" \
+  "${ground_truth_dir}/set1bin.test.prop.txt"
 
 echo 'Start to generate click logs...'
 for i in 0 1;
