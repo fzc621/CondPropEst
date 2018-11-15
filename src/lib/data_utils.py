@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from sklearn.datasets import load_svmlight_file
+from scipy.sparse import csr_matrix
 
 def load_query(path):
     queries = []
@@ -14,6 +16,25 @@ def load_query(path):
                 queries.append(Query(qid, (rel, toks[2])))
             else:
                 queries[-1].append((rel, toks[2]))
+    return queries
+
+def load_rel_query(path):
+    queries = []
+    X, y, qids = load_svmlight_file(path, query_id=True)
+    last_qid = 0
+    temp_X = []
+    for i in range(y.shape[0]):
+        qid = qids[i]
+        if qid != last_qid:
+            if temp_X:
+                feat = np.mean(np.concatenate(temp_X, axis=0), axis=0)
+                queries.append(Query(last_qid, feat=feat))
+            last_qid = qid
+            temp_X.clear()
+        if y[i]:
+            temp_X.append(X[i].toarray())
+    feat = np.mean(np.concatenate(temp_X, axis=0), axis=0)
+    queries.append(Query(last_qid, feat=feat))
     return queries
 
 def load_feat(path):

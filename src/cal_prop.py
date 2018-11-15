@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='calculate query propensity')
     parser.add_argument('-n', default=10, type=int,
         help='#top positions for which estimates are desired')
-    parser.add_argument('-d', default=10, type=int,
+    parser.add_argument('-d', default=699, type=int,
         help='#dimension of feature')
     parser.add_argument('-m', choices=['exp', 'power', 'comp'],
         help='simulation function')
