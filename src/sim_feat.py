@@ -13,6 +13,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Feature of queries simulation')
     parser.add_argument('-st', type=float, help='strength of relevance')
+    parser.add_argument('-d', default=10, type=int,
+        help='#dimension of feature')
     parser.add_argument('data_path', help='data path')
     parser.add_argument('output_dir', help='output dir')
     args = parser.parse_args()
@@ -21,12 +23,11 @@ if __name__ == '__main__':
     np.random.seed()
     start = timeit.default_timer()
 
-    queries = load_rel_query(args.data_path)
-    # MAX_REL_CNT = 41 # TODO: Magic Number
-    num_rel = int(699 * args.st)
-    num_rnd = 699 - num_rel
+    queries = load_rel_query(args.data_path, args.d)
+    num_rel = int(args.d * args.st)
+    num_rnd = args.d - num_rel
     for query in queries:
-        random_feat = np.random.uniform(-1, 1, num_rnd)
+        random_feat = np.random.normal(0, 0.35, num_rnd)
         rel_feat = 2 * query._feat - 1
         if num_rel == 0:
             query._feat = random_feat.tolist()

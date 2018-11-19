@@ -28,18 +28,8 @@ def read_para(path, dim, range):
     return w
 
 def cal_prob(w, x, r, method):
-    if method == 'power':
-        eta = max(np.dot(w, x) + 1, 0)
-        # if np.dot(w, x) < 0:
-        #     print(np.dot(w, x))
-        return pow(1 / r, eta)
-    elif method == 'exp':
-        # exponential function
-        a = np.dot(w, x) / 3.2
-        return np.power(a, r - 1)
-    elif method == 'comp':
-        a = np.dot(w, x)
-        return 1 / (a * (r - 1) + 1)
+    eta = max(np.dot(w, x) + 1, 0)
+    return pow(1 / r, eta)
 
 def avg_rel_err(p, p_):
     return np.mean(np.absolute(1 - p / p_))
