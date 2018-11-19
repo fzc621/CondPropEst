@@ -34,7 +34,7 @@ if __name__ == '__main__':
         elif num_rnd == 0:
             query._feat = rel_feat.tolist()
         else:
-            query._feat = np.concatenate(query._feat[:num_rel], random_feat).tolist()
+            query._feat = np.concatenate((query._feat[:num_rel], random_feat)).tolist()
     filename = os.path.basename(args.data_path)
     featpath = os.path.join(args.output_dir,
                                 '{}.feat.txt'.format(filename[:-4]))

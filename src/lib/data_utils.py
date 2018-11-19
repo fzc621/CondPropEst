@@ -20,7 +20,7 @@ def load_query(path):
 
 def load_rel_query(path, dim):
     queries = []
-    indices = [29,33,35,42,65,68,69,97,107,122,126,134,145,146,148,153,158,171,172,178,211,215,234,242,264,265,266,275,304,328,336,340,346,347,348,349,355,358,383,384,417,444,449,450,473,475,485,498,514,532,537,540,573,577,584,585,605,640,664,673,693]
+    indices = [362, 407, 431, 425, 646, 417, 110, 90, 547, 536]
     X, y, qids = load_svmlight_file(path, query_id=True)
     last_qid = 0
     temp_X = []
@@ -28,12 +28,14 @@ def load_rel_query(path, dim):
         qid = qids[i]
         if qid != last_qid:
             if temp_X:
+                # feat = np.mean(np.concatenate(temp_X, axis=0), axis=0)
                 feat = np.take(np.mean(np.concatenate(temp_X, axis=0), axis=0), indices[:dim])
                 queries.append(Query(last_qid, feat=feat))
             last_qid = qid
             temp_X.clear()
         if y[i]:
             temp_X.append(X[i].toarray())
+    # feat = np.mean(np.concatenate(temp_X, axis=0), axis=0)
     feat = np.take(np.mean(np.concatenate(temp_X, axis=0), axis=0), indices[:dim])
     queries.append(Query(last_qid, feat=feat))
     return queries

@@ -40,18 +40,18 @@ svm_classify="${svm_dir}/svm_rank_classify"
 dim="10"
 sts="0 0.2 0.4 0.6 0.8 1.0"
 
-echo 'Genrating two rankers'
-mkdir -p ${DATA_DIR}
-$python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
-
-mkdir -p ${expt_dir}
-for i in 0 1;
-do
-  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
-    "${expt_dir}/rank${i}.dat" > /dev/null
-  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
-    "${expt_dir}/train.score${i}.dat" > /dev/null
-done
+# echo 'Genrating two rankers'
+# mkdir -p ${DATA_DIR}
+# $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
+#
+# mkdir -p ${expt_dir}
+# for i in 0 1;
+# do
+#   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
+#     "${expt_dir}/rank${i}.dat" > /dev/null
+#   $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
+#     "${expt_dir}/train.score${i}.dat" > /dev/null
+# done
 
 for st in $sts; do
   strength_dir="${expt_dir}/strength/${st}"
