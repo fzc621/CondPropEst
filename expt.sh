@@ -22,15 +22,19 @@ fi
 if [[ "$1" == "weight" ]]; then
   w="$2"
   sw="0.5"
-  st="0"
+  sts="0"
 elif [[ "$1" == "sweep" ]]; then
   sw="$2"
   w="0.5"
-  st="0"
+  sts="0"
+elif [[ "$1" == "strength" ]]; then
+  sw="$2"
+  w="0.5"
+  sts="0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0"
 else
   sw="5"
   w="0.5"
-  st="0"
+  sts="0"
 fi
 
 DATASET_DIR='../../dataset/filter_set1bin'
@@ -38,20 +42,20 @@ svm_dir="../svm_rank"
 svm_learn="${svm_dir}/svm_rank_learn"
 svm_classify="${svm_dir}/svm_rank_classify"
 dim="10"
-sts="0 0.2 0.4 0.6 0.8 1.0"
 
-# echo 'Genrating two rankers'
-# mkdir -p ${DATA_DIR}
-# $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
-#
-# mkdir -p ${expt_dir}
-# for i in 0 1;
-# do
-#   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
-#     "${expt_dir}/rank${i}.dat" > /dev/null
-#   $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
-#     "${expt_dir}/train.score${i}.dat" > /dev/null
-# done
+
+echo 'Genrating two rankers'
+mkdir -p ${DATA_DIR}
+$python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
+
+mkdir -p ${expt_dir}
+for i in 0 1;
+do
+  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
+    "${expt_dir}/rank${i}.dat" > /dev/null
+  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
+    "${expt_dir}/train.score${i}.dat" > /dev/null
+done
 
 for st in $sts; do
   strength_dir="${expt_dir}/strength/${st}"
@@ -89,8 +93,8 @@ for st in $sts; do
   model_dir="${res_dir}/wo_cond"
   mkdir -p ${model_dir}
   echo 'Estimating without query feature'
-  $python -m src.model.wo_cond -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} #> "${model_dir}/train.txt"
-  $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} #> "${model_dir}/test.txt"
+  $python -m src.model.wo_cond -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
+  $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 
   # # === mlp without relevance ==
   # echo 'Estimating without relevance model...'
