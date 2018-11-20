@@ -14,5 +14,5 @@ run()
 
 for i in $(seq 0 5); do
   	echo "Run = ${i}"
-  	sh expt.sh strength $i
+  	sh expt.sh strength $i &
 done

@@ -58,12 +58,18 @@ do
 done
 
 for st in $sts; do
-  strength_dir="${expt_dir}/strength/${st}"
+  if [[ $sts == "0" ]]; then
+    strength_dir="${expt_dir}"
+    feat_dir="$DATA_DIR"
+  else
+    strength_dir="${expt_dir}/strength/${st}"
+    feat_dir="$DATA_DIR/${st}"
+  fi
+
   log_dir="${strength_dir}/log"
   res_dir="${strength_dir}/result"
   ground_truth_dir="${strength_dir}/ground_truth"
   NPY_DIR="${strength_dir}/data"
-  feat_dir="$DATA_DIR/${st}"
 
   echo 'Synthesizing features and calculating true propensity'
   mkdir -p $feat_dir
@@ -115,7 +121,7 @@ for st in $sts; do
   #   valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
   # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
   #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
-  #
+
   # === mlp without relevance ==
   echo 'Estimating without relevance model...'
   for n1 in $(seq 8 16)
