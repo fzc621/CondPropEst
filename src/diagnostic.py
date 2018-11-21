@@ -46,13 +46,12 @@ if __name__ == '__main__':
             if rk >= 10:
                 break
             Y[i][rk] = rel
-    cnt = Counter()
+    W = np.zeros(699)
     for i in range(10):
         clf = LogisticRegression(multi_class='ovr', solver='lbfgs').fit(X, Y[:,i])
         abs_coef = np.abs(clf.coef_).flatten()
-        imp_sort = list(reversed(np.argsort(abs_coef)))
-        cnt.update(imp_sort[:15])
+        W = np.maximum(W, abs_coef)
 
-    print(cnt.most_common(10))
+    print(list(reversed(np.argsort(W)))[:10])
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

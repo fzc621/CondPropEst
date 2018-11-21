@@ -16,7 +16,9 @@ strength_dir="${expt_dir}/strength/${st}"
 feat_dir="$DATA_DIR/${st}"
 expt_dir="data/set1bin/expt"
 
-# $python -m src.sim_feat -st ${st} -d ${dim} "${DATA_DIR}/set1bin.train.txt" $feat_dir
+# Remember to reset sim_feat
+mkdir -p $feat_dir
+$python -m src.sim_feat -st ${st} -d ${dim} "${DATA_DIR}/set1bin.train.txt" $feat_dir
 
 $python -m src.diagnostic "${DATA_DIR}/set1bin.train.txt" \
 	"${expt_dir}/train.score0.dat" "${feat_dir}/set1bin.train.feat.txt"
