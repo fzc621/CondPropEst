@@ -27,12 +27,13 @@ if __name__ == '__main__':
     wo_metric = {}
     mlp_metric = {}
     rel_metric = {}
-
+    imp_metric = {}
 
     for col in columns:
         wo_metric[col] = {}
         mlp_metric[col] = {}
         rel_metric[col] = {}
+        imp_metric[col] = {}
         for i in range(1, args.k):
             run_key = '#{}'.format(i)
             run_dir = os.path.join(args.str_dir, '{}/strength'.format(i))
@@ -49,6 +50,7 @@ if __name__ == '__main__':
             wo_metric[col][run_key] = wo_err
             mlp_metric[col][run_key] = mlp_err
             rel_metric[col][run_key] = rel_err
+            imp_metric[col][run_key] = 1 - rel_err / mlp_err
 
 
     wo_metric_df = pd.DataFrame(wo_metric, columns=columns, dtype='float64')
@@ -66,13 +68,18 @@ if __name__ == '__main__':
     rel_metric_df.loc['std'] = rel_metric_df.std()
     rel_metric_df.to_csv(os.path.join(args.str_dir, 'rel_result.csv'), float_format='%.6f')
 
+    imp_metric_df = pd.DataFrame(imp_metric, columns=columns, dtype='float64')
+    imp_metric_df.loc['avg'] = imp_metric_df.mean()
+    imp_metric_df.loc['std'] = imp_metric_df.std()
+    imp_metric_df.to_csv(os.path.join(args.str_dir, 'imp_result.csv'), float_format='%.6f')
+
     plt.figure()
     plt.xlabel('Strength of Relevance Dependence')
     plt.ylabel('Relative Error')
     # plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.')
-    plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-')
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
-    plt.errorbar(columns, 1 -  rel_metric_df.loc['avg'] / mlp_metric_df.loc['avg'], label='Improvement' )
+    # plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-')
+    # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
+    plt.errorbar(columns, imp_metric_df.loc['avg'], label='Improvement')
     plt.legend(frameon=False, loc='upper left')
     plt.xticks(columns, columns)
     x0, x1, y0, y1 = plt.axis()
