@@ -28,14 +28,16 @@ if __name__ == '__main__':
     start = timeit.default_timer()
     M = args.m
     D = args.d
-    feat_path = os.path.join(args.data_dir, 'set1bin.{}.feat.txt'.format(args.data))
+    feat_path = os.path.join(args.data_dir, '{}.feat.txt'.format(args.data))
     feat_queries = load_feat(feat_path)
 
     N = len(feat_queries)
     log0_path = os.path.join(args.log_dir, '{}.log0.txt'.format(args.data))
     log1_path = os.path.join(args.log_dir, '{}.log1.txt'.format(args.data))
+    log2_path = os.path.join(args.log_dir, '{}.log1.txt'.format(args.data))
     log0 = load_log(log0_path)
     log1 = load_log(log1_path)
+    log2 = load_log(log2_path)
 
     S = defaultdict(set)
     for q0, q1 in zip(log0, log1):
@@ -58,6 +60,47 @@ if __name__ == '__main__':
                     S[(rk1, rk0)].add((qid, doc_id0))
                     break
 
+    for q0, q2 in zip(log0, log2):
+        assert q0._qid == q2._qid
+        qid = q0._qid
+        docs0 = q0._docs
+        docs2 = q2._docs
+        for rk0, doc0 in enumerate(docs0, start=1):
+            if rk0 > M:
+                break
+            doc_id0, _ = doc0
+            for rk2, doc2 in enumerate(docs2, start=1):
+                if rk2 > M:
+                    break
+                if rk2 == rk0:
+                    continue
+                doc_id2, _ = doc2
+                if doc_id2 == doc_id0:
+                    S[(rk0, rk2)].add((qid, doc_id0))
+                    S[(rk2, rk0)].add((qid, doc_id0))
+                    break
+
+    for q1, q2 in zip(log1, log2):
+        assert q1._qid == q2._qid
+        qid = q1._qid
+        docs1 = q1._docs
+        docs2 = q2._docs
+        for rk1, doc1 in enumerate(docs1, start=1):
+            if rk1 > M:
+                break
+            doc_id1, _ = doc1
+            for rk2, doc2 in enumerate(docs2, start=1):
+                if rk2 > M:
+                    break
+                if rk2 == rk1:
+                    continue
+                doc_id2, _ = doc2
+                if doc_id2 == doc_id1:
+                    S[(rk1, rk2)].add((qid, doc_id1))
+                    S[(rk2, rk1)].add((qid, doc_id1))
+                    break
+
+    print(S)
     n0 = len(log0)
     n1 = len(log1)
     n2 = len(log2)

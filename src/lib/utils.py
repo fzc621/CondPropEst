@@ -67,3 +67,7 @@ def find_best_rel_model(dir):
                         best_err = err
                         best_path = path
     return best_path
+
+def is_complex(query):
+    parser = parse.parse('(({}) AND ({}))', query)
+    return parser != None
