@@ -67,8 +67,10 @@ if __name__ == '__main__':
         X = np.array([[0],[1]])
         p_ = sess.run([model.norm_p_], feed_dict={model.x:X})[0]
         print(p_)
-        prop_path = os.path.join(args.model_dir, 'arxiv.prop.txt')
-        np.savetxt(prop_path, p_, fmt='%.18f')
+        complex_prop_path = os.path.join(args.model_dir, 'complex_prop.txt')
+        np.savetxt(complex_prop_path, p_[0], fmt='%.18f')
+        simple_prop_path = os.path.join(args.model_dir, 'simple_prop.txt')
+        np.savetxt(simple_prop_path, p_[1], fmt='%.18f')
 
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
