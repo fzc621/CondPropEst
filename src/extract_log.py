@@ -43,7 +43,6 @@ if __name__ == '__main__':
                 uid = row['uid']
                 click_set.add((uid, row['paper']))
 
-    n = np.zeros(3)
     feats = []
     # feat generation
     with open(query_path, 'r') as fin:
@@ -54,7 +53,6 @@ if __name__ == '__main__':
             feats.append(int(is_complex(query)))
             toks = row['results'].split('*')
             selected_ranker_id = int(toks[1])
-            n[selected_ranker_id] += 1
     num_queries = len(feats)
     feats = np.array(feats).reshape(-1,1)
     np.save(args.feat_path, feats)
@@ -80,7 +78,7 @@ if __name__ == '__main__':
                 for i in range(3):
                     ranker = all_ranks[i]
                     if ranker[k] == doc:
-                        weight += n[i]
+                        weight += 1
 
                 for k_ in range(max_length):
                     if k_ == k:
