@@ -137,6 +137,8 @@ if __name__ == '__main__':
                             res_cat = result.split('/')[0]
                             if '.' in res_cat:
                                 res_cat = res_cat.split('.')[0]
+                                if res_cat not in art_cat2idx:
+                                    continue
                                 cat_idx = art_cat2idx[res_cat]
                                 art_cat_vector[cat_idx] += 1
                 cat_sum = sum(art_cat_vector)
