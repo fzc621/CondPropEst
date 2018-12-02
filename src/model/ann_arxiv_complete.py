@@ -63,18 +63,7 @@ if __name__ == '__main__':
                 model.saver.save(sess, '{}/checkpoint'.format(args.model_dir), global_step=model.global_step)
             if epoch % 100 == 0:
                 print('{}\tTrain Loss: {:.4f}'.format(epoch, train_loss))
-                X = np.array([[0],[1]])
-                p_ = sess.run([model.norm_p_], feed_dict={model.x:X})[0]
-                print(p_)
 
-        X = np.array([[0],[1]])
-        p_ = sess.run([model.norm_p_], feed_dict={model.x:X})[0]
-        print('simple: {}'.format(np.array2string(p_[0], separator=',')))
-        print('complex: {}'.format(np.array2string(p_[1], separator=',')))
-        complex_prop_path = os.path.join(args.model_dir, 'complex_prop.txt')
-        np.savetxt(complex_prop_path, p_[1], fmt='%.18f')
-        simple_prop_path = os.path.join(args.model_dir, 'simple_prop.txt')
-        np.savetxt(simple_prop_path, p_[0], fmt='%.18f')
-
+    print('Train Loss: {:.4f}'.format(train_loss))
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
