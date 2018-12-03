@@ -29,8 +29,11 @@ feat_dir="${model_dir}/input"
 log_dir="${model_dir}/log"
 npy_dir="${model_dir}/data"
 res_dir="${model_dir}/result"
-$python -m src.extract_log -m ${max_rk} "$DATASET_DIR/queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${npy_dir}/train.feat.npy" "${npy_dir}/train.click.npy"
+$python -m src.generate_feat -m ${max_rk} "$DATASET_DIR/queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${npy_dir}/train.feat.npy"
+
+$python -m src.extract_click -m ${max_rk} "$DATASET_DIR/queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${npy_dir}/train.click.npy"
 
 # === mlp without relevance ==
 # echo 'Estimating without relevance model...'

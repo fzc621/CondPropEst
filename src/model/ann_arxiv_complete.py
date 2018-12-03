@@ -40,9 +40,9 @@ if __name__ == '__main__':
     makedirs(args.model_dir)
     with tf.Session() as sess:
         if args.model == 'mlp':
-            model = mlp.MLP(D, M, args.n1)
+            model = mlp.MLP(D, M, args.n1, 0.1)
         elif args.model == 'mlp_rel':
-            model = mlp_rel.MLP(D, M, args.n1, args.n2)
+            model = mlp_rel.MLP(D, M, args.n1, args.n2, 0.1)
 
         train_click_path = os.path.join(args.npy_dir, 'train.click.npy')
         train_c, train_not_c = np.load(train_click_path)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
             tf.global_variables_initializer().run()
 
         best_loss = math.inf
-        for epoch in range(1500):
+        for epoch in range(10000):
             train_loss, _ = sess.run([model.loss, model.train_op],
                     feed_dict={model.x:X_train, model.c:train_c, model.not_c: train_not_c})
             if train_loss < best_loss:
@@ -64,6 +64,6 @@ if __name__ == '__main__':
             if epoch % 100 == 0:
                 print('{}\tTrain Loss: {:.4f}'.format(epoch, train_loss))
 
-    print('Train Loss: {:.4f}'.format(train_loss))
+    print('Best Loss: {:.4f}'.format(best_loss))
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

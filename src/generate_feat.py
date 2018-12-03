@@ -39,13 +39,12 @@ result_limits = [1, 2, 5, 10, 15, 20, 50, 100, 150, 200]
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Generate log and feature')
+        description='Generate feature')
     parser.add_argument('-m', type=int, help='max pos to be estimated')
     parser.add_argument('--complete', action='store_true', help='feat generation')
     parser.add_argument('query_path', help='query path')
     parser.add_argument('click_path', help='click path')
     parser.add_argument('feat_path', help='feat path')
-    parser.add_argument('info_path')
 
     args = parser.parse_args()
     start = timeit.default_timer()
@@ -53,8 +52,6 @@ if __name__ == '__main__':
     M = args.m
     query_path = args.query_path
     click_path = args.click_path
-    uid2qid = {}
-    click_set = set()
 
     art_cat2idx = {}
     for article_categorie in article_categories:
@@ -63,21 +60,14 @@ if __name__ == '__main__':
     for article_categorie in strange_categories:
         art_cat2idx[article_categorie] = art_cat2idx[article_categorie[:-1]]
 
-    with open(click_path, 'r') as fin:
-        reader = csv.DictReader(fin, delimiter='\t', quoting=csv.QUOTE_NONE,
-                                fieldnames=click_field_name)
-        for row in reader:
-            if row['format'] == 'abs':
-                uid = row['uid']
-                click_set.add((uid, row['paper']))
-
     feats = []
     num_cat = len(categories)
     num_len_limits = len(len_limits)
     num_session_limits = len(session_limits)
     num_result_limits = len(result_limits)
     num_art_cat = len(article_categories)
-    cnt = Counter()
+    session_cnt = Counter()
+
     if args.complete:
         with open(query_path, 'r') as fin:
             reader = csv.DictReader(fin, delimiter='\t', quoting=csv.QUOTE_NONE,
@@ -110,8 +100,8 @@ if __name__ == '__main__':
 
                 session_vector = [0] * num_session_limits
                 session = row["session"]
-                v_session = cnt[session]
-                cnt[session] += 1
+                session_cnt[session] += 1
+                v_session = session_cnt[session]
                 for i in range(num_session_limits):
                     if v_session <= session_limits[i]:
                         session_vector[i] = 1
@@ -157,48 +147,9 @@ if __name__ == '__main__':
             for row in reader:
                 query = row['query']
                 feats.append(int(is_complex(query)))
-        num_queries = len(feats)
         feats = np.array(feats).reshape(-1,1)
     makedirs(os.path.dirname(args.feat_path))
     np.save(args.feat_path, feats)
 
-    c, not_c = np.zeros((num_queries, M, M)), np.zeros((num_queries, M, M))
-    cnt = 0
-    with open(query_path, 'r') as fin:
-        reader = csv.DictReader(fin, delimiter='\t', quoting=csv.QUOTE_NONE,
-                                fieldnames=query_field_name)
-        for row in reader:
-            uid = row['uid']
-            toks = row['results'].split('*')
-            all_ranks = []
-            for i in range(3):
-                all_ranks.append(toks[3 + i].split(',')[1:])
-            selected_ranker_id = int(toks[1])
-            selected_ranker = all_ranks[selected_ranker_id]
-            selected_length = len(selected_ranker)
-            max_length = min(selected_length, M)
-            for k in range(max_length):
-                doc = selected_ranker[k]
-                weight = 0
-                for i in range(3):
-                    ranker = all_ranks[i]
-                    if ranker[k] == doc:
-                        weight += 1
-
-                for k_ in range(max_length):
-                    if k_ == k:
-                        continue
-
-                    for i in range(3):
-                        ranker = all_ranks[i]
-                        if ranker[k_] == doc:
-                            if (uid, doc) in click_set:
-                                c[cnt][k][k_] = 1.0 / weight
-                            else:
-                                not_c[cnt][k][k_] = 1.0 / weight
-            cnt += 1
-
-    assert cnt == num_queries
-    np.save(args.info_path, (c, not_c))
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
