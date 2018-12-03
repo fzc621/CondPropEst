@@ -27,13 +27,13 @@ $python -m src.extract_click -m ${max_rk} --complete "$DATASET_DIR/queries_multi
 # === mlp without relevance ==
 echo 'Estimating without relevance model...'
 model_dir="${res_dir}/mlp"
-mkdir -p ${expt_dir}
+mkdir -p ${model_dir}
 $python -m src.model.ann_arxiv_complete -m ${max_rk} -d ${dim} -n1 128 \
-  mlp ${npy_dir} ${expt_dir}
+  mlp ${npy_dir} ${model_dir}
 
 # === mlp with relevance ===
 echo 'Estimating with relevance model...'
 model_dir="${res_dir}/mlp_rel"
-mkdir -p ${expt_dir}
+mkdir -p ${model_dir}
 $python -m src.model.ann_arxiv_complete -m ${max_rk} -d ${dim} -n1 32 -n2 32 \
-  mlp ${npy_dir} ${expt_dir}
+  mlp ${npy_dir} ${model_dir}
