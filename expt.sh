@@ -49,18 +49,18 @@ prop_svm_classify="${prop_svm_dir}/svm_proprank_classify"
 dim="10"
 
 
-echo 'Genrating two rankers'
-mkdir -p ${DATA_DIR}
-$python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
-
-mkdir -p ${expt_dir}
-for i in 0 1;
-do
-  $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
-    "${expt_dir}/rank${i}.dat" > /dev/null
-  $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
-    "${expt_dir}/train.score${i}.dat" > /dev/null
-done
+# echo 'Genrating two rankers'
+# mkdir -p ${DATA_DIR}
+# $python -m src.sample_slice -o 0.2 "${DATASET_DIR}/set1bin.train.txt" $DATA_DIR
+#
+# mkdir -p ${expt_dir}
+# for i in 0 1;
+# do
+#   $svm_learn -c 3 "${DATA_DIR}/set1bin.slice${i}.txt" \
+#     "${expt_dir}/rank${i}.dat" > /dev/null
+#   $svm_classify "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/rank${i}.dat" \
+#     "${expt_dir}/train.score${i}.dat" > /dev/null
+# done
 
 for st in $sts; do
   if [[ $sts == ${default_st} ]]; then
@@ -76,55 +76,55 @@ for st in $sts; do
   ground_truth_dir="${strength_dir}/ground_truth"
   NPY_DIR="${strength_dir}/data"
 
-  echo 'Synthesizing features and calculating true propensity'
-  mkdir -p $feat_dir
-  $python -m src.sim_feat -st ${st} -d ${dim} "${DATA_DIR}/set1bin.train.txt" $feat_dir
-  $python -m src.sim_feat -st ${st} -d ${dim} "${DATASET_DIR}/set1bin.valid.txt" $feat_dir
-  $python -m src.sim_feat -st ${st} -d ${dim} "${DATASET_DIR}/set1bin.test.txt" $feat_dir
-
-  $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.train.feat.txt" \
-    "${ground_truth_dir}/set1bin.train.prop.txt"
-  $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
-    "${ground_truth_dir}/set1bin.valid.prop.txt"
-  $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.test.feat.txt" \
-    "${ground_truth_dir}/set1bin.test.prop.txt"
-
-  echo 'Start to generate click logs...'
-  for i in 0 1;
-  do
-    $python -m src.sim_click -s $sw -m power -d ${dim} -w $w "${expt_dir}/para.dat" \
-      "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score${i}.dat" \
-      "${feat_dir}/set1bin.train.feat.txt" "${log_dir}/train.log${i}.txt"
-  done
-
-  $python -m src.data_process -m 10 -d ${dim} train ${log_dir} ${feat_dir} ${NPY_DIR}
-
-  # === PBM ===
-  model_dir="${res_dir}/pbm"
-  mkdir -p ${model_dir}
-  echo 'Estimating without query feature'
-  $python -m src.model.pbm -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
-  # $python -m src.model.pbm --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
-
-  # === CPBM without relevance ==
-  # echo 'Estimating without relevance model...'
-  # model_dir="${res_dir}/mlp"
+  # echo 'Synthesizing features and calculating true propensity'
+  # mkdir -p $feat_dir
+  # $python -m src.sim_feat -st ${st} -d ${dim} "${DATA_DIR}/set1bin.train.txt" $feat_dir
+  # $python -m src.sim_feat -st ${st} -d ${dim} "${DATASET_DIR}/set1bin.valid.txt" $feat_dir
+  # $python -m src.sim_feat -st ${st} -d ${dim} "${DATASET_DIR}/set1bin.test.txt" $feat_dir
+  #
+  # $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.train.feat.txt" \
+  #   "${ground_truth_dir}/set1bin.train.prop.txt"
+  # $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
+  #   "${ground_truth_dir}/set1bin.valid.prop.txt"
+  # $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.test.feat.txt" \
+  #   "${ground_truth_dir}/set1bin.test.prop.txt"
+  #
+  # echo 'Start to generate click logs...'
+  # for i in 0 1;
+  # do
+  #   $python -m src.sim_click -s $sw -m power -d ${dim} -w $w "${expt_dir}/para.dat" \
+  #     "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score${i}.dat" \
+  #     "${feat_dir}/set1bin.train.feat.txt" "${log_dir}/train.log${i}.txt"
+  # done
+  #
+  # $python -m src.data_process -m 10 -d ${dim} train ${log_dir} ${feat_dir} ${NPY_DIR}
+  #
+  # # === PBM ===
+  # model_dir="${res_dir}/pbm"
   # mkdir -p ${model_dir}
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
-  #   train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
-  #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
-
-  # === CPBM ===
-  echo 'Estimating with relevance model...'
-  model_dir="${res_dir}/cpbm"
-  mkdir -p ${model_dir}
-  $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-    train mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  # echo 'Estimating without query feature'
+  # $python -m src.model.pbm -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
+  # # $python -m src.model.pbm --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
+  #
+  # # === CPBM without relevance ==
+  # # echo 'Estimating without relevance model...'
+  # # model_dir="${res_dir}/mlp"
+  # # mkdir -p ${model_dir}
+  # # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
+  # #   train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  # # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
+  # #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  #
+  # # === CPBM ===
+  # echo 'Estimating with relevance model...'
+  # model_dir="${res_dir}/cpbm"
+  # mkdir -p ${model_dir}
   # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-  #   valid mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-  #   test mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  #   train mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  # # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
+  # #   valid mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
+  # # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
+  # #   test mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
   # # === mlp without relevance ==
   # echo 'Estimating without relevance model...'
@@ -195,7 +195,7 @@ for st in $sts; do
 
   wait
 
-  for model in "pbm cpbm gt"
+  for model in pbm cpbm gt
   do
     for t in ${ts}
     do
@@ -208,13 +208,13 @@ for st in $sts; do
 
   wait
 
-  for model in "pbm cpbm gt"
+  for model in pbm cpbm gt
   do
     for t in ${ts}
     do
       for c in ${cs}
       do
-          ${prop_svm_classify} "${learn_dir}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${model}_t${t}_c${c}.log" &
+          ${prop_svm_classify} "${learn_dir}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/${model}_t${t}_c${c}.log" &
       done
     done
   done

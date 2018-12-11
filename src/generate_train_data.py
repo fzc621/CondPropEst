@@ -19,7 +19,7 @@ def generate(fout, query, qid, cost, doc_id):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='generate data for Prop SVM')
     parser.add_argument('-t', default=1, type=float, help='clip parameter')
-    parser.add_argument('--gt', action='store_true', 'for ground truth')
+    parser.add_argument('--gt', action='store_true', help='for ground truth')
     parser.add_argument('prop_path', help='prop path')
     parser.add_argument('data_path', help='data_path')
     parser.add_argument('score_path', help='score path')
