@@ -44,7 +44,7 @@ if __name__ == '__main__':
             doc_id = len(queries[-1]._docs)
             queries[-1].append((doc_id, score, rel, feat))
 
-    if args.g:
+    if args.gt:
         est = load_prop(args.prop_path)
     else:
         est = np.loadtxt(args.prop_path)
