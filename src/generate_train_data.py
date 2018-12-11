@@ -6,7 +6,7 @@ import random
 import timeit
 import argparse
 import numpy as np
-from .lib.data_utils import Query, load_log
+from .lib.data_utils import Query, load_log, load_prop
 from .lib.utils import *
 
 def generate(fout, query, qid, cost, doc_id):
@@ -18,7 +18,8 @@ def generate(fout, query, qid, cost, doc_id):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='generate data for Prop SVM')
-    parser.add_argument('-t', default=1, type=float, description='clip parameter')
+    parser.add_argument('-t', default=1, type=float, help='clip parameter')
+    parser.add_argument('--gt', action='store_true', 'for ground truth')
     parser.add_argument('prop_path', help='prop path')
     parser.add_argument('data_path', help='data_path')
     parser.add_argument('score_path', help='score path')
@@ -43,7 +44,10 @@ if __name__ == '__main__':
             doc_id = len(queries[-1]._docs)
             queries[-1].append((doc_id, score, rel, feat))
 
-    est = np.loadtxt(args.prop_path)
+    if args.g:
+        est = load_prop(args.prop_path)
+    else:
+        est = np.loadtxt(args.prop_path)
     M = est.shape[1]
     log = load_log(args.log_path)
     num_query = est.shape[0]

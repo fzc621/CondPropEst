@@ -104,7 +104,7 @@ for st in $sts; do
   mkdir -p ${model_dir}
   echo 'Estimating without query feature'
   $python -m src.model.pbm -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
-  # $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
+  # $python -m src.model.pbm --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 
   # === CPBM without relevance ==
   # echo 'Estimating without relevance model...'
@@ -186,7 +186,7 @@ for st in $sts; do
   model_dir=${ground_truth_dir}
   for t in ${ts}
   do
-    $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+    $python -m src.generate_train_data -t ${t} --gt "${model_dir}/set1bin.train.prop.txt" \
     	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
     	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
   done
