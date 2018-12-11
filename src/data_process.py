@@ -60,10 +60,9 @@ if __name__ == '__main__':
 
     n0 = len(log0)
     n1 = len(log1)
-    n2 = len(log2)
-    assert n0 == n1 and n1 == n2
+    assert n0 == n1
     w = Counter()
-    for i in range(3):
+    for i in range(2):
         logger = eval('log{}'.format(i))
         for q in logger:
             qid = q._qid
@@ -75,7 +74,7 @@ if __name__ == '__main__':
                 w.update({(qid, doc_id, rk):eval('n{}'.format(i))})
 
     c_cnt, not_c_cnt = Counter(), Counter()
-    for i in range(3):
+    for i in range(2):
         logger = eval('log{}'.format(i))
         for q in logger:
             qid = q._qid
@@ -105,7 +104,7 @@ if __name__ == '__main__':
                 not_c[idx][k][k_] = not_c_cnt[(k + 1, k_ + 1, qid)]
 
     makedirs(args.npy_dir)
-    train_feat_path = os.path.join(args.data_dir, 'train.feat.txt')
+    train_feat_path = os.path.join(args.data_dir, 'set1bin.train.feat.txt')
     train_feat_queries = load_feat(train_feat_path)
     X = np.array([q._feat for q in train_feat_queries])
     train_feat_npy_path = os.path.join(args.npy_dir, 'train.feat.npy')
@@ -113,6 +112,18 @@ if __name__ == '__main__':
 
     click_npy_path = os.path.join(args.npy_dir, '{}.click.npy'.format(args.data))
     np.save(click_npy_path, (c, not_c))
+
+    valid_feat_path = os.path.join(args.data_dir, 'set1bin.valid.feat.txt')
+    valid_feat_queries = load_feat(valid_feat_path)
+    X = np.array([q._feat for q in valid_feat_queries])
+    valid_feat_npy_path = os.path.join(args.npy_dir, 'valid.feat.npy')
+    np.save(valid_feat_npy_path, X)
+
+    test_feat_path = os.path.join(args.data_dir, 'set1bin.test.feat.txt')
+    test_feat_queries = load_feat(test_feat_path)
+    X = np.array([q._feat for q in test_feat_queries])
+    test_feat_npy_path = os.path.join(args.npy_dir, 'test.feat.npy')
+    np.save(test_feat_npy_path, X)
 
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

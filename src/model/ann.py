@@ -60,16 +60,18 @@ if __name__ == '__main__':
 
             best_err = math.inf
             for epoch in range(1000):
-                train_loss, train_err, _ = sess.run([model.loss, model.err, model.train_op],
+                p_, train_loss, train_err, _ = sess.run([model.norm_p_, model.loss, model.err, model.train_op],
                          feed_dict={model.x:X_train, model.p:Y_train, model.c:train_c, model.not_c: train_not_c})
                 if train_err < best_err:
                     best_err = train_err
+                    best_p_ = p_
                     model.saver.save(sess, '{}/checkpoint'.format(args.model_dir), global_step=model.global_step)
                 if epoch % 5 == 0:
                     print('{}\tTrain Loss: {:.4f}\tError: {:.4f}\tLowest Error:{:.4f}'
                             .format(epoch, train_loss, train_err, best_err))
             print('Relative Error on training set: {}'.format(best_err))
-
+            prop_path = os.path.join(args.model_dir, 'set1bin.{}.prop.txt'.format(args.dataset))
+            np.savetxt(prop_path, p_, fmt='%.18f')
         else:
             if args.inference_version == 0:  # Load the checkpoint
                 model_path = tf.train.latest_checkpoint(args.model_dir)

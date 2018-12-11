@@ -123,6 +123,9 @@ if __name__ == '__main__':
         gt_path = os.path.join(args.gt_dir, 'set1bin.train.prop.txt')
         prop = load_prop(gt_path)
         print('Relative Error on training set: {}'.format(avg_rel_err(prop, prop_)))
-
+        N = prop.shape[0]
+        train_prop_path = os.path.join(args.model_dir, 'set1bin.train.prop.txt')
+        np.savetxt(train_prop_path,  np.tile(prop_, (N, 1)), fmt='%.18f')
+        np.savetxt('set1bin.train.prop.txt',  prop, fmt='%.18f')
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

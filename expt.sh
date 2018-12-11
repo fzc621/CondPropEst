@@ -2,6 +2,8 @@
 
 set -e
 
+default_st="1"
+
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   python="/home/$(whoami)/anaconda3/envs/tf/bin/python"
 else
@@ -21,26 +23,29 @@ fi
 
 if [[ "$1" == "weight" ]]; then
   w="$2"
-  sw="0.5"
-  sts="0"
+  sw="5"
+  sts=${default_st}
 elif [[ "$1" == "sweep" ]]; then
   sw="$2"
-  w="0.5"
-  sts="0"
+  w="0.2"
+  sts=${default_st}
 elif [[ "$1" == "strength" ]]; then
   sw="$2"
-  w="0.5"
+  w="0.2"
   sts="0 0.2 0.4 0.6 0.8 1.0"
 else
   sw="5"
-  w="0.5"
-  sts="0"
+  w="0.2"
+  sts=${default_st}
 fi
 
 DATASET_DIR='../../dataset/filter_set1bin'
 svm_dir="../svm_rank"
 svm_learn="${svm_dir}/svm_rank_learn"
 svm_classify="${svm_dir}/svm_rank_classify"
+prop_svm_dir="../svm_proprank"
+prop_svm_learn="${prop_svm_dir}/svm_proprank_learn"
+prop_svm_classify="${prop_svm_dir}/svm_proprank_classify"
 dim="10"
 
 
@@ -58,7 +63,7 @@ do
 done
 
 for st in $sts; do
-  if [[ $sts == "0" ]]; then
+  if [[ $sts == ${default_st} ]]; then
     strength_dir="${expt_dir}"
     feat_dir="$DATA_DIR"
   else
@@ -93,65 +98,124 @@ for st in $sts; do
   done
 
   $python -m src.data_process -m 10 -d ${dim} train ${log_dir} ${feat_dir} ${NPY_DIR}
-  # rm -rf ${DATA_DIR}
 
-  # === w/o cond ===
-  model_dir="${res_dir}/wo_cond"
+  # === PBM ===
+  model_dir="${res_dir}/pbm"
   mkdir -p ${model_dir}
   echo 'Estimating without query feature'
-  $python -m src.model.wo_cond -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
-  $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
+  $python -m src.model.pbm -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
+  # $python -m src.model.wo_cond --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 
-  # # === mlp without relevance ==
+  # === CPBM without relevance ==
   # echo 'Estimating without relevance model...'
   # model_dir="${res_dir}/mlp"
   # mkdir -p ${model_dir}
   # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
-  #   train mlp ${NPY_DIR} ${model_dir} #> "${model_dir}/train.txt"
+  #   train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
   # $python -m src.model.ann -m 10 -d ${dim} -n1 16 --gt_dir ${ground_truth_dir} \
-  #   test mlp ${NPY_DIR} ${model_dir} #> "${model_dir}/test.txt"
+  #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+
+  # === CPBM ===
+  echo 'Estimating with relevance model...'
+  model_dir="${res_dir}/cpbm"
+  mkdir -p ${model_dir}
+  $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
+    train mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
+  #   valid mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
+  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
+  #   test mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+
+  # # === mlp without relevance ==
+  # echo 'Estimating without relevance model...'
+  # for n1 in $(seq 8 16)
+  # do
+  #   model_dir="${res_dir}/mlp/${n1}"
+  #   mkdir -p ${model_dir}
+  #   echo "N1 = ${n1}"
+  #   $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #     train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  #   $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #     valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
+  #   $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #     test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  # done
   #
   # # === mlp with relevance ===
   # echo 'Estimating with relevance model...'
-  # model_dir="${res_dir}/mlp_rel"
-  # mkdir -p ${model_dir}
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-  #   train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-  #   valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-  # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
-  #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  # for n1 in $(seq 8 16)
+  # do
+  #   for n2 in $(seq 8 16)
+  #   do
+  #     model_dir="${res_dir}/mlp_rel/${n1}/${n2}"
+  #     mkdir -p ${model_dir}
+  #     echo "N1 = ${n1} N2 = ${n2}"
+  #     $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
+  #       train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  #     $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
+  #       valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
+  #     $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
+  #       test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  #   done
+  # done
 
-  # === mlp without relevance ==
-  echo 'Estimating without relevance model...'
-  for n1 in $(seq 8 16)
+  # === Learning Part ===
+  learn_dir="${expt_dir}/learn"
+  ts="0.01 0.03 0.1 0.3"
+  cs="0.1 0.3 1 3 10 30 100"
+  mkdir -p ${learn_dir}
+  # === PBM ===
+  model_dir="${res_dir}/pbm"
+  for t in ${ts}
   do
-    model_dir="${res_dir}/mlp/${n1}"
-    mkdir -p ${model_dir}
-    echo "N1 = ${n1}"
-    $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-      train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
-    $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-      valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-    $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-      test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+    $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+    	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
+    	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat" &
   done
 
-  # === mlp with relevance ===
-  echo 'Estimating with relevance model...'
-  for n1 in $(seq 8 16)
+  # === CPBM ===
+  model_dir="${res_dir}/cpbm"
+  for t in ${ts}
   do
-    for n2 in $(seq 8 16)
+    $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+    	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
+    	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat" &
+  done
+
+  # === True propensity ===
+  model_dir=${ground_truth_dir}
+  for t in ${ts}
+  do
+    $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+    	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
+    	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
+  done
+
+  $python -m src.generate_test_data "${DATASET_DIR}/set1bin.test.txt" "${learn_dir}/test.dat" &
+
+  wait
+
+  for model in "pbm cpbm gt"
+  do
+    for t in ${ts}
     do
-      model_dir="${res_dir}/mlp_rel/${n1}/${n2}"
-      mkdir -p ${model_dir}
-      echo "N1 = ${n1} N2 = ${n2}"
-      $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
-        train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
-      $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
-        valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-      $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
-        test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+      for c in ${cs}
+      do
+          ${prop_svm_learn} -c $C "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+      done
+    done
+  done
+
+  wait
+
+  for model in "pbm cpbm gt"
+  do
+    for t in ${ts}
+    do
+      for c in ${cs}
+      do
+          ${prop_svm_classify} "${learn_dir}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${model}_t${t}_c${c}.log" &
+      done
     done
   done
 done
