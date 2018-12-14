@@ -69,5 +69,10 @@ def find_best_rel_model(dir):
     return best_path
 
 def is_complex(query):
-    parser = parse.parse('(({}) AND ({}))', query)
-    return parser != None
+    # parser = parse.parse('(({}) AND ({}))', query)
+    # return parser != None
+    keywords = ['AND', 'OR']
+    for keyword in keywords:
+        if keyword in query:
+            return True
+    return False
