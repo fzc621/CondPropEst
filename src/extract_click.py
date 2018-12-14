@@ -48,7 +48,7 @@ if __name__ == '__main__':
                                 fieldnames=query_field_name)
         for row in reader:
             num_queries += 1
-
+    print(num_queries)
     c, not_c = np.zeros((num_queries, M, M)), np.zeros((num_queries, M, M))
     cnt = 0
     with open(query_path, 'r') as fin:
@@ -69,15 +69,18 @@ if __name__ == '__main__':
                 weight = 0
                 for i in range(3):
                     ranker = all_ranks[i]
+                    if len(ranker) <= k:
+                        continue
                     if ranker[k] == doc:
                         weight += 1
 
                 for k_ in range(max_length):
                     if k_ == k:
                         continue
-
                     for i in range(3):
                         ranker = all_ranks[i]
+                        if len(ranker) <= k_:
+                            continue
                         if ranker[k_] == doc:
                             if (uid, doc) in click_set:
                                 c[cnt][k][k_] = 1.0 / weight
