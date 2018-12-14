@@ -14,32 +14,34 @@ DATASET_DIR="../../dataset/arxiv"
 dim="1"
 max_rk="21"
 
+# $python -m src.arxiv_match.split_data "${DATASET_DIR}/queries_multi.tsv" "${DATA_DIR}"
+
 # === Swap Intervention ===
 model_dir="${expt_dir}/swap"
 $python -m src.arxiv_match.split_arxiv "${DATASET_DIR}/queries_multi_swap.tsv" "${DATA_DIR}"
-
-$python -m src.arxiv_match.swap_prop -m ${max_rk} "${DATA_DIR}/complex_queries_multi_swap.tsv" \
-  "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/complex_prop.txt"
-$python -m src.arxiv_match.swap_prop -m ${max_rk}  "${DATA_DIR}/simple_queries_multi_swap.tsv" \
-  "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/simple_prop.txt"
-
-$python -m src.arxiv_match.bootstrap_swap -m ${max_rk} "${DATA_DIR}/complex_queries_multi_swap.tsv" \
-  "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/complex_bootstrap.txt"
-$python -m src.arxiv_match.bootstrap_swap -m ${max_rk} "${DATA_DIR}/simple_queries_multi_swap.tsv" \
-  "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/simple_bootstrap.txt"
+#
+# $python -m src.arxiv_match.swap_prop -m ${max_rk} "${DATA_DIR}/complex_queries_multi_swap.tsv" \
+#   "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/complex_prop.txt"
+# $python -m src.arxiv_match.swap_prop -m ${max_rk}  "${DATA_DIR}/simple_queries_multi_swap.tsv" \
+#   "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/simple_prop.txt"
+#
+# $python -m src.arxiv_match.bootstrap_swap -m ${max_rk} "${DATA_DIR}/complex_queries_multi_swap.tsv" \
+#   "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/complex_bootstrap.txt"
+# $python -m src.arxiv_match.bootstrap_swap -m ${max_rk} "${DATA_DIR}/simple_queries_multi_swap.tsv" \
+#   "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/simple_bootstrap.txt"
 
 # === PBM ===
 model_dir="${expt_dir}/pbm"
-$python -m src.arxiv_match.split_arxiv "${DATASET_DIR}/queries_multi.tsv" "${DATA_DIR}"
+$python -m src.arxiv_match.split_arxiv "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}"
 
-$python -m src.arxiv_match.pbm_prop -m ${max_rk} "${DATA_DIR}/complex_queries_multi.tsv" \
+$python -m src.arxiv_match.pbm_prop -m ${max_rk} "${DATA_DIR}/complex_train_queries_multi.tsv" \
   "$DATASET_DIR/clicks_multi.tsv" "${model_dir}/result/complex_prop.txt"
-$python -m src.arxiv_match.pbm_prop -m ${max_rk} "${DATA_DIR}/simple_queries_multi.tsv" \
+$python -m src.arxiv_match.pbm_prop -m ${max_rk} "${DATA_DIR}/simple_train_queries_multi.tsv" \
   "$DATASET_DIR/clicks_multi.tsv" "${model_dir}/result/simple_prop.txt"
 
-$python -m src.arxiv_match.bootstrap_pbm -m ${max_rk} "${DATA_DIR}/complex_queries_multi.tsv" \
+$python -m src.arxiv_match.bootstrap_pbm -m ${max_rk} "${DATA_DIR}/complex_train_queries_multi.tsv" \
   "$DATASET_DIR/clicks_multi.tsv" "${model_dir}/result/complex_bootstrap.txt"
-$python -m src.arxiv_match.bootstrap_pbm -m ${max_rk} "${DATA_DIR}/simple_queries_multi.tsv" \
+$python -m src.arxiv_match.bootstrap_pbm -m ${max_rk} "${DATA_DIR}/simple_train_queries_multi.tsv" \
   "$DATASET_DIR/clicks_multi.tsv" "${model_dir}/result/simple_bootstrap.txt"
 
 

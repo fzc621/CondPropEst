@@ -22,26 +22,31 @@ if __name__ == '__main__':
     args = parser.parse_args()
     start = timeit.default_timer()
 
+    random.seed()
     query_path = args.data_path
     query_name = os.path.basename(args.data_path)
-    complex_path = os.path.join(args.output_dir, 'complex_{}'.format(query_name))
-    simple_path = os.path.join(args.output_dir, 'simple_{}'.format(query_name))
-    makedirs(os.path.dirname(complex_path))
-    with open(query_path, 'r') as fin, open(complex_path, 'w') as fcomplex, open(simple_path, 'w') as fsimple:
+    train_path = os.path.join(args.output_dir, 'train_{}'.format(query_name))
+    valid_path = os.path.join(args.output_dir, 'valid_{}'.format(query_name))
+    test_path = os.path.join(args.output_dir, 'test_{}'.format(query_name))
+    makedirs(args.output_dir)
+    with open(query_path, 'r') as fin, open(train_path, 'w') as ftrain, open(valid_path, 'w') as fvalid, open(test_path, 'w') as ftest:
         reader = csv.DictReader(fin, delimiter='\t', quotechar="'", fieldnames=query_field_name)
-        complex_writer = csv.DictWriter(fcomplex, delimiter='\t', extrasaction='ignore',
+        train_writer = csv.DictWriter(ftrain, delimiter='\t', extrasaction='ignore',
                                         quotechar="'", fieldnames=query_field_name)
-        simple_writer = csv.DictWriter(fsimple, delimiter='\t', extrasaction='ignore',
+        valid_writer = csv.DictWriter(fvalid, delimiter='\t', extrasaction='ignore',
                                         quotechar="'", fieldnames=query_field_name)
-
+        test_writer = csv.DictWriter(ftest, delimiter='\t', extrasaction='ignore',
+                                        quotechar="'", fieldnames=query_field_name)
         for row in reader:
             row = dict(row)
             query = row['query']
-            # del row[None]
-            if is_complex(query):
-                complex_writer.writerow(row)
+            del row[None]
+            v = random.random()
+            if v < 0.8:
+                train_writer.writerow(row)
+            elif v < 0.9:
+                valid_writer.writerow(row)
             else:
-                simple_writer.writerow(row)
-
+                test_writer.writerow(row)
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
