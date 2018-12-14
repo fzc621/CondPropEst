@@ -42,13 +42,14 @@ class EstWorker(mp.Process):
                 print('{}: Processed {} tasks'.format(name, cnt))
                 break
             feat, c, not_c = task
+            del task
             task_output_dir = os.path.join(output_dir, '{}_{}'.format(name, cnt))
             makedirs(task_output_dir)
             with tf.Session() as sess:
                 model = mlp_rel.MLP(D, M, n1, n2)
                 tf.global_variables_initializer().run()
                 best_loss = math.inf
-                for epoch in range(10):
+                for epoch in range(1000):
                     train_loss, _ = sess.run([model.loss, model.train_op],
                             feed_dict={model.x:feat, model.c:c,
                                         model.not_c: not_c})
@@ -83,10 +84,11 @@ def bootstrap(D, M, n_samples, c, not_c, feat, n1, n2, output_dir, n_workers):
             b_feat.append(feat[i])
             b_c.append(c[i])
             b_not_c.append(not_c[i])
-        b_feat = np.array(b_feat).reshape(data_size, -1)
-        b_c = np.array(b_c).reshape(data_size, M, M)
-        b_not_c = np.array(b_not_c).reshape(data_size, M, M)
-        task_queue.put((b_feat, b_c, b_not_c))
+        bs_feat = np.array(b_feat).reshape(data_size, -1)
+        bs_c = np.array(b_c).reshape(data_size, M, M)
+        bs_not_c = np.array(b_not_c).reshape(data_size, M, M)
+        del b_feat, b_c, b_not_c
+        task_queue.put((bs_feat, bs_c, b_not_c))
 
     for _ in range(n_workers):
         task_queue.put(None)
