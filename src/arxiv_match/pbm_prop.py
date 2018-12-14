@@ -80,6 +80,8 @@ if __name__ == '__main__':
 
                     for i in range(3):
                         ranker = all_ranks[i]
+                        if len(ranker(ranker)) < k:
+                            continue
                         if ranker[k_] == doc:
                             if (uid, doc) in click_set:
                                 # c[k][k_] += 1.0 / weight
