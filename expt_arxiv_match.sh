@@ -83,5 +83,9 @@ mlp_dir="${model_dir}/mlp"
 #       "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/valid_${n1}_${n2}.log" &
 #   done
 # done
-$python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} --n_workers 12 "${DATA_DIR}" \
-  "${mlp_dir}" "${model_dir}/result"
+
+for i in $(seq 0 999)
+do
+  $python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} "${DATA_DIR}" \
+    "${mlp_dir}" "${model_dir}/result/${i}"
+done
