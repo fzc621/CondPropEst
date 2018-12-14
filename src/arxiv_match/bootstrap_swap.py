@@ -8,7 +8,7 @@ import timeit
 import numpy as np
 import argparse
 import multiprocessing as mp
-from .lib.utils import makedirs
+from ..lib.utils import makedirs
 
 click_field_name = ["date", "format", "paper", "ip", "mode", "uid", "session",
                     "port", "id", "useragent", "usercookies"]
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Propensity Estimation via swap intervention')
     parser.add_argument('-m', type=int, help='max pos to be estimated')
-    parser.add_argument('-n', type=int, default=100, help='num of bootstrap samples')
+    parser.add_argument('-n', type=int, default=1000, help='num of bootstrap samples')
     parser.add_argument('-p', type=float, default=0.95, help='confdence probability')
     parser.add_argument('--n_workers', default=mp.cpu_count(), type=int,
                         help='number of workers')
@@ -115,8 +115,7 @@ if __name__ == '__main__':
     with open(click_path, 'r') as fin:
         reader = csv.DictReader(fin, delimiter='\t', fieldnames=click_field_name)
         for line in reader:
-            if line['format'] == 'abs':
-                click_set.add((line['uid'], line['paper']))
+            click_set.add((line['uid'], line['paper']))
 
     query_list = []
     with open(query_path, 'r') as fin:

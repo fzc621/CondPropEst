@@ -7,7 +7,8 @@ import random
 import timeit
 import numpy as np
 import argparse
-from .lib.utils import makedirs, is_complex
+from ..lib.utils import makedirs, is_complex
+csv.field_size_limit(sys.maxsize)
 
 query_field_name = ["date", "query", "ip", "referer", "mode", "num_results",
                     "results", "uid", "session", "port", "overlength", "id",
@@ -22,8 +23,9 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     query_path = args.data_path
-    complex_path = os.path.join(args.output_dir, 'complex_queries_multi_swap.tsv')
-    simple_path = os.path.join(args.output_dir, 'simple_queries_multi_swap.tsv')
+    query_name = os.path.basename(args.data_path)
+    complex_path = os.path.join(args.output_dir, 'complex_{}'.format(query_name))
+    simple_path = os.path.join(args.output_dir, 'simple_{}'.format(query_name))
     makedirs(os.path.dirname(complex_path))
     with open(query_path, 'r') as fin, open(complex_path, 'w') as fcomplex, open(simple_path, 'w') as fsimple:
         reader = csv.DictReader(fin, delimiter='\t', quotechar="'", fieldnames=query_field_name)

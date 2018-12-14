@@ -7,7 +7,7 @@ import random
 import timeit
 import numpy as np
 import argparse
-from .lib.utils import makedirs
+from ..lib.utils import makedirs
 
 click_field_name = ["date", "format", "paper", "ip", "mode", "uid", "session",
                     "port", "id", "useragent", "usercookies"]
@@ -35,8 +35,7 @@ if __name__ == '__main__':
     with open(click_path, 'r') as fin:
         reader = csv.DictReader(fin, delimiter='\t', fieldnames=click_field_name)
         for line in reader:
-            if line['format'] == 'abs':
-                click_set.add((line['uid'], line['paper']))
+            click_set.add((line['uid'], line['paper']))
 
     top2k_shown = np.zeros(M)
     top2k_click = np.zeros(M)
