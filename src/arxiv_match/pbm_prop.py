@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
                     for i in range(3):
                         ranker = all_ranks[i]
-                        if len(ranker(ranker)) < k:
+                        if len(ranker) < k:
                             continue
                         if ranker[k_] == doc:
                             if (uid, doc) in click_set:
