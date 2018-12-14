@@ -50,15 +50,15 @@ max_rk="21"
 echo '=== CPBM ==='
 model_dir="${expt_dir}/cpbm"
 mlp_dir="${model_dir}/mlp"
-$python -m src.generate_feat -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.feat.npy"
-$python -m src.generate_feat -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.feat.npy"
-
-$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.click.npy"
-$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.click.npy"
+# $python -m src.generate_feat -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
+#   "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.feat.npy"
+# $python -m src.generate_feat -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
+#   "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.feat.npy"
+#
+# $python -m src.extract_click -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
+#   "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.click.npy"
+# $python -m src.extract_click -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
+#   "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.click.npy"
 
 mkdir -p ${mlp_dir}
 ns="4 8 16 32"
@@ -69,8 +69,17 @@ do
     $python -m src.arxiv_match.cpbm_prop -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n1} train mlp "${DATA_DIR}" \
        "${mlp_dir}/${n1}_${n2}" > "${mlp_dir}/train_${n1}_${n2}.log"&
+  done
+done
+
+wait
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
     $python -m src.arxiv_match.cpbm_prop -m ${max_rk} -d ${dim} \
       -n1 ${n1} -n2 ${n1} valid mlp "${DATA_DIR}" \
-      "${mlp_dir}/${n1}_${n2}" > "${mlp_dir}/valid_${n1}_${n2}.log"&
+      "${mlp_dir}/${n1}_${n2}" > "${mlp_dir}/valid_${n1}_${n2}.log" &
   done
 done

@@ -86,7 +86,7 @@ if __name__ == '__main__':
             X_test = np.load(test_feat_path)
 
             test_loss = sess.run([model.loss], feed_dict={model.x:X_test,
-                                model.c:test_c, model.not_c: test_not_c}))[0]
+                                model.c:test_c, model.not_c: test_not_c})[0]
             print('Loss on validation set: {}'.format(test_loss))
 
     end = timeit.default_timer()

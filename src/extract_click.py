@@ -48,7 +48,6 @@ if __name__ == '__main__':
                                 fieldnames=query_field_name)
         for row in reader:
             num_queries += 1
-    print(num_queries)
     c, not_c = np.zeros((num_queries, M, M)), np.zeros((num_queries, M, M))
     cnt = 0
     with open(query_path, 'r') as fin:
