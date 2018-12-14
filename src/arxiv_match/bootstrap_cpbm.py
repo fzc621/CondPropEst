@@ -58,6 +58,7 @@ class EstWorker(mp.Process):
                                         global_step=model.global_step)
                 X = np.array([[0],[1]])
                 p_ = sess.run([model.norm_p_], feed_dict={model.x:X})[0]
+            del feat, c, not_c, task
             res_list.append(p_)
             task_queue.task_done()
             cnt += 1
