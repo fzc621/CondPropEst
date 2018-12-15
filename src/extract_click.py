@@ -86,7 +86,6 @@ if __name__ == '__main__':
                             else:
                                 not_c[cnt][k][k_] = 1.0 / weight
             cnt += 1
-
     np.save(args.info_path, (c, not_c))
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

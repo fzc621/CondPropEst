@@ -8,32 +8,172 @@ else
   python="/Users/ezail/anaconda3/bin/python"
 fi
 
-expt_dir="data/arxiv_obj/"
+expt_dir="data/arxiv_obj"
+DATA_DIR="data/arxiv/input"
 DATASET_DIR="../../dataset/arxiv"
-dim="70"
 max_rk="21"
 
 # === Implicit Intervention ===
-log_dir="${expt_dir}/log"
-npy_dir="${expt_dir}/data"
 res_dir="${expt_dir}/result"
+$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.click.npy"
+$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.click.npy"
+$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/test_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.click.npy"
 
-$python -m src.generate_feat -m ${max_rk} --complete "$DATASET_DIR/queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${npy_dir}/train.feat.npy"
+# === PBM ===
+model_dir="${res_dir}/pbm"
+$python -m src.arxiv_obj.pbm -m ${max_rk} "${DATA_DIR}/train.click.npy" \
+  "${DATA_DIR}/test.click.npy" "${DATA_DIR}/test_loss.txt"
 
-$python -m src.extract_click -m ${max_rk} --complete "$DATASET_DIR/queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${npy_dir}/train.click.npy"
+ns="16 32 64 128"
+# === CPBM: Full Features ===
+model_dir="${res_dir}/full"
+dim="70"
+echo 'Full features'
+$python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
+  --session --num_results --result_proportion "${DATA_DIR}/train_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.full.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
+  --session --num_results --result_proportion "${DATA_DIR}/valid_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.full.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
+  --session --num_results --result_proportion "${DATA_DIR}/test_queries_multi.tsv" \
+  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.full.feat.npy"
 
-# === mlp without relevance ==
-echo 'Estimating without relevance model...'
-model_dir="${res_dir}/mlp"
-mkdir -p ${model_dir}
-$python -m src.model.ann_arxiv_complete -m ${max_rk} -d ${dim} -n1 128 \
-  mlp ${npy_dir} ${model_dir}
 
-# === mlp with relevance ===
-echo 'Estimating with relevance model...'
-model_dir="${res_dir}/mlp_rel"
-mkdir -p ${model_dir}
-$python -m src.model.ann_arxiv_complete -m ${max_rk} -d ${dim} -n1 32 -n2 32 \
-  mlp ${npy_dir} ${model_dir}
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} full "${DATA_DIR}" "${model_dir}" \
+      # &> "${model_dir}/${n1}_${n2}.log"
+  done
+done
+
+wait
+# === CPBM: Complex Features ===
+model_dir="${res_dir}/complex"
+dim="10"
+echo 'complex features'
+$python -m src.generate_feat -m ${max_rk} --complete --complex \
+  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train.complex.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --complex\
+  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid.complex.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --complex \
+  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test.complex.feat.npy"
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} complex "${DATA_DIR}" "${model_dir}" \
+      &> "${model_dir}/${n1}_${n2}.log" &
+  done
+done
+
+wait
+# === CPBM: Query-Length Features ===
+model_dir="${res_dir}/query_len"
+dim="10"
+echo 'query_len features'
+$python -m src.generate_feat -m ${max_rk} --complete --query_len \
+  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train.query_len.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --query_len\
+  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid.query_len.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --query_len \
+  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test.query_len.feat.npy"
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} query_len "${DATA_DIR}" "${model_dir}" \
+      &> "${model}/${n1}_${n2}.log" &
+  done
+done
+
+wait
+# === CPBM: Session Features ===
+model_dir="${res_dir}/session"
+dim="5"
+echo 'session features'
+$python -m src.generate_feat -m ${max_rk} --complete --session \
+  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train.session.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --session\
+  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid.session.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --session \
+  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test.session.feat.npy"
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} session "${DATA_DIR}" "${model_dir}" \
+     &> "${model_dir}/${n1}_${n2}.log" &
+  done
+done
+
+wait
+# === CPBM: Num_of_results Features ===
+model_dir="${res_dir}/num_results"
+dim="10"
+echo 'num of results features'
+$python -m src.generate_feat -m ${max_rk} --complete --num_results \
+  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train.num_results.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --num_results\
+  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid.num_results.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --num_results \
+  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test.num_results.feat.npy"
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} num_results "${DATA_DIR}" "${model_dir}" \
+     &> "${model_dir}/${n1}_${n2}.log" &
+  done
+done
+
+wait
+# === CPBM: R Features ===
+model_dir="${res_dir}/result_proportion"
+dim="35"
+echo 'result proportion features'
+$python -m src.generate_feat -m ${max_rk} --complete --result_proportion \
+  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train.result_proportion.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --result_proportion\
+  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid.result_proportion.feat.npy"
+$python -m src.generate_feat -m ${max_rk} --complete --result_proportion \
+  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test.result_proportion.feat.npy"
+
+for n1 in ${ns}
+do
+  for n2 in ${ns}
+  do
+    $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
+       -n1 ${n1} -n2 ${n1} result_proportion "${DATA_DIR}" "${model_dir}" \
+      &> "${model_dir}/${n1}_${n2}.log" &
+  done
+done

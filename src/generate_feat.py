@@ -42,6 +42,11 @@ if __name__ == '__main__':
         description='Generate feature')
     parser.add_argument('-m', type=int, help='max pos to be estimated')
     parser.add_argument('--complete', action='store_true', help='feat generation')
+    parser.add_argument('--complex', action='store_true')
+    parser.add_argument('--query_len', action='store_true')
+    parser.add_argument('--session', action='store_true')
+    parser.add_argument('--num_results', action='store_true')
+    parser.add_argument('--result_proportion', action='store_true')
     parser.add_argument('query_path', help='query path')
     parser.add_argument('click_path', help='click path')
     parser.add_argument('feat_path', help='feat path')
@@ -75,68 +80,75 @@ if __name__ == '__main__':
             for row in reader:
                 query = row['query']
                 feat = []
-
-                complex = int(is_complex(query))
-                one_hot_cat = [0] * num_cat
-                if complex:
-                    cat_parser = parse.parse('(({}) AND (category:{} OR group:{}))'
-                                             , query)
-                    cat = cat_parser[1]
-                    feat.append(1)
-                else:
-                    cat = 'unknown'
-                    feat.append(0)
-                one_hot_cat[categories.index(cat)] = 1
-                feat.extend(one_hot_cat)
-
-                len_vector = [0] * num_len_limits
-                query_len = len(query.strip().split())
-                for i in range(num_len_limits):
-                    if query_len <= len_limits[i]:
-                        len_vector[i] = 1
+                if args.complex:
+                    complex = int(is_complex(query))
+                    one_hot_cat = [0] * num_cat
+                    if complex:
+                        cat_parser = parse.parse('(({}) AND (category:{} OR group:{}))'
+                                                 , query)
+                        if cat_parser:
+                            cat = cat_parser[1]
+                            feat.append(1)
+                        else:
+                            feat.append(0)
                     else:
-                        break
-                feat.extend(len_vector)
+                        cat = 'unknown'
+                        feat.append(0)
+                    one_hot_cat[categories.index(cat)] = 1
+                    feat.extend(one_hot_cat)
 
-                session_vector = [0] * num_session_limits
-                session = row["session"]
-                session_cnt[session] += 1
-                v_session = session_cnt[session]
-                for i in range(num_session_limits):
-                    if v_session <= session_limits[i]:
-                        session_vector[i] = 1
+                if args.query_len:
+                    len_vector = [0] * num_len_limits
+                    query_len = len(query.strip().split())
+                    for i in range(num_len_limits):
+                        if query_len <= len_limits[i]:
+                            len_vector[i] = 1
+                        else:
+                            break
+                    feat.extend(len_vector)
+
+                if args.session:
+                    session_vector = [0] * num_session_limits
+                    session = row["session"]
+                    session_cnt[session] += 1
+                    v_session = session_cnt[session]
+                    for i in range(num_session_limits):
+                        if v_session <= session_limits[i]:
+                            session_vector[i] = 1
+                        else:
+                            break
+                    feat.extend(session_vector)
+
+                if args.num_results:
+                    result_vector = [0] * num_result_limits
+                    num_results = int(row['num_results'])
+                    for i in range(num_result_limits):
+                        if num_results <= result_limits[i]:
+                            result_vector[i] = 1
+                        else:
+                            break
+                    feat.extend(result_vector)
+
+                if args.result_proportion:
+                    art_cat_vector = np.zeros(num_art_cat)
+                    rankers = row['results'].split('*')[3:]
+                    for ranker in rankers:
+                        results = ranker.split(',')[1:]
+                        for result in results:
+                            if '/' in result:
+                                res_cat = result.split('/')[0]
+                                if '.' in res_cat:
+                                    res_cat = res_cat.split('.')[0]
+                                    if res_cat not in art_cat2idx:
+                                        continue
+                                    cat_idx = art_cat2idx[res_cat]
+                                    art_cat_vector[cat_idx] += 1
+                    cat_sum = sum(art_cat_vector)
+                    if cat_sum > 0:
+                        art_cat_vector = art_cat_vector / float(cat_sum)
                     else:
-                        break
-                feat.extend(session_vector)
-
-                result_vector = [0] * num_result_limits
-                num_results = int(row['num_results'])
-                for i in range(num_result_limits):
-                    if num_results <= result_limits[i]:
-                        result_vector[i] = 1
-                    else:
-                        break
-                feat.extend(result_vector)
-
-                art_cat_vector = np.zeros(num_art_cat)
-                rankers = row['results'].split('*')[3:]
-                for ranker in rankers:
-                    results = ranker.split(',')[1:]
-                    for result in results:
-                        if '/' in result:
-                            res_cat = result.split('/')[0]
-                            if '.' in res_cat:
-                                res_cat = res_cat.split('.')[0]
-                                if res_cat not in art_cat2idx:
-                                    continue
-                                cat_idx = art_cat2idx[res_cat]
-                                art_cat_vector[cat_idx] += 1
-                cat_sum = sum(art_cat_vector)
-                if cat_sum > 0:
-                    art_cat_vector = art_cat_vector / float(cat_sum)
-                else:
-                    art_cat_vector[-1] = 1
-                feat.extend(art_cat_vector.tolist())
+                        art_cat_vector[-1] = 1
+                    feat.extend(art_cat_vector.tolist())
                 feats.append(feat)
         num_queries = len(feats)
         feats = np.array(feats).reshape(num_queries,-1)

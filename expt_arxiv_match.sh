@@ -31,9 +31,10 @@ max_rk="21"
 # $python -m src.arxiv_match.bootstrap_swap -m ${max_rk} "${DATA_DIR}/simple_queries_multi_swap.tsv" \
 #   "$DATASET_DIR/clicks_multi_swap.tsv" "${model_dir}/result/simple_bootstrap.txt"
 
+# $python -m src.arxiv_match.plot_complex "${model_dir}/result" "${expt_dir}/swap.pdf"
 # === PBM ===
 # echo '=== PBM ==='
-# model_dir="${expt_dir}/pbm"
+model_dir="${expt_dir}/pbm"
 # $python -m src.arxiv_match.split_arxiv "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}"
 #
 # $python -m src.arxiv_match.pbm_prop -m ${max_rk} "${DATA_DIR}/complex_train_queries_multi.tsv" \
@@ -46,6 +47,7 @@ max_rk="21"
 # $python -m src.arxiv_match.bootstrap_pbm -m ${max_rk} "${DATA_DIR}/simple_train_queries_multi.tsv" \
 #   "$DATASET_DIR/clicks_multi.tsv" "${model_dir}/result/simple_bootstrap.txt"
 
+# $python -m src.arxiv_match.plot_complex "${model_dir}/result" "${expt_dir}/pbm.pdf"
 # === CPBM ===
 echo '=== CPBM ==='
 model_dir="${expt_dir}/cpbm"
