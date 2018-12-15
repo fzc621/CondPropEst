@@ -161,7 +161,7 @@ if __name__ == '__main__':
                                 c[k][k_] += 1.0 / weight
                             else:
                                 not_c[k][k_] += 1.0 / weight
-        query_list.append((c, not_c))
+            query_list.append((c, not_c))
 
     prop_list = bootstrap(M, n_samples, query_list, click_set, n_workers)
     lo = int(n_samples * ((1 - args.p) / 2))
