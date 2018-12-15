@@ -24,8 +24,9 @@ $python -m src.extract_click -m ${max_rk} "${DATA_DIR}/test_queries_multi.tsv" \
 
 # === PBM ===
 model_dir="${res_dir}/pbm"
+mkdir -p ${model_dir}
 $python -m src.arxiv_obj.pbm -m ${max_rk} "${DATA_DIR}/train.click.npy" \
-  "${DATA_DIR}/test.click.npy" "${DATA_DIR}/test_loss.txt"
+  "${DATA_DIR}/test.click.npy" "${model_DIR}/test_loss.txt"
 
 ns="16 32 64 128"
 # === CPBM: Full Features ===
