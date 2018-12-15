@@ -42,14 +42,15 @@ $python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
   --session --num_results --result_proportion "${DATA_DIR}/test_queries_multi.tsv" \
   "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.full.feat.npy"
 
-
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} full "${DATA_DIR}" "${model_dir}" \
-      # &> "${model_dir}/${n1}_${n2}.log"
+       -n1 ${n1} -n2 ${n1} full "${DATA_DIR}" "${mlp_dir}" \
+      &> "${model_dir}/${n1}_${n2}.log"
   done
 done
 
@@ -68,12 +69,14 @@ $python -m src.generate_feat -m ${max_rk} --complete --complex \
   "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
   "${DATA_DIR}/test.complex.feat.npy"
 
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} complex "${DATA_DIR}" "${model_dir}" \
+       -n1 ${n1} -n2 ${n1} complex "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -93,13 +96,15 @@ $python -m src.generate_feat -m ${max_rk} --complete --query_len \
   "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
   "${DATA_DIR}/test.query_len.feat.npy"
 
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} query_len "${DATA_DIR}" "${model_dir}" \
-      &> "${model}/${n1}_${n2}.log" &
+       -n1 ${n1} -n2 ${n1} query_len "${DATA_DIR}" "${mlp_dir}" \
+      &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
 
@@ -118,12 +123,14 @@ $python -m src.generate_feat -m ${max_rk} --complete --session \
   "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
   "${DATA_DIR}/test.session.feat.npy"
 
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} session "${DATA_DIR}" "${model_dir}" \
+       -n1 ${n1} -n2 ${n1} session "${DATA_DIR}" "${mlp_dir}" \
      &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -143,12 +150,14 @@ $python -m src.generate_feat -m ${max_rk} --complete --num_results \
   "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
   "${DATA_DIR}/test.num_results.feat.npy"
 
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} num_results "${DATA_DIR}" "${model_dir}" \
+       -n1 ${n1} -n2 ${n1} num_results "${DATA_DIR}" "${mlp_dir}" \
      &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -168,12 +177,14 @@ $python -m src.generate_feat -m ${max_rk} --complete --result_proportion \
   "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
   "${DATA_DIR}/test.result_proportion.feat.npy"
 
+mkdir -p ${model_dir}
 for n1 in ${ns}
 do
   for n2 in ${ns}
   do
+    mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} result_proportion "${DATA_DIR}" "${model_dir}" \
+       -n1 ${n1} -n2 ${n1} result_proportion "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
