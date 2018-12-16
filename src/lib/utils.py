@@ -4,6 +4,7 @@ import os
 import sys
 import random
 import parse
+import pickle
 import numpy as np
 
 def makedirs(dirname):
@@ -12,6 +13,19 @@ def makedirs(dirname):
 
 def prob_test(prob):
     return random.random() <= prob
+
+def read_idx(path, dim):
+    if os.path.exists(path):
+        with open(path, 'rb') as fin:
+            idx = pickle.load(fin)
+            return idx
+    candis = [362, 431, 668, 425, 331, 344, 646, 384, 90, 186, 407, 647, 243, 392, 561, 413, 145, 506, 620, 488, 151, 676, 501, 417, 503, 536, 69, 479, 689, 617]
+    idx = random.sample(candis, dim)
+    print('Select {}'.format(idx))
+    makedirs(os.path.dirname(path))
+    with open(path, 'wb') as fout:
+        pickle.dump(idx, fout)
+    return idx
 
 def read_para(path, dim, range):
     if os.path.exists(path):
@@ -26,6 +40,7 @@ def read_para(path, dim, range):
     x = np.hstack((range, w))
     np.savetxt(path, x)
     return w
+
 
 def cal_prob(w, x, r, method):
     eta = max(np.dot(w, x) + 1, 0)

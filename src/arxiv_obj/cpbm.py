@@ -51,7 +51,7 @@ if __name__ == '__main__':
             tf.global_variables_initializer().run()
 
         best_loss = math.inf
-        for epoch in range(15000):
+        for epoch in range(10000):
             train_loss, _ = sess.run([model.loss, model.train_op],
                     feed_dict={model.x:X_train, model.c:train_c,
                                model.not_c: train_not_c})
@@ -59,8 +59,10 @@ if __name__ == '__main__':
                 best_loss = train_loss
                 model.saver.save(sess, '{}/checkpoint'.format(args.output_dir), global_step=model.global_step)
 
-        if epoch % 100 == 0:
-            print('{}\tTrain Loss: {:.4f}'.format(epoch, train_loss))
+            if epoch % 100 == 0:
+                print('{}\tTrain Loss: {:.4f}'.format(epoch, train_loss))
+
+        model.saver.restore(sess, tf.train.latest_checkpoint(args.output_dir))
 
         valid_click_path = os.path.join(args.data_dir, 'valid.click.npy')
         valid_c, valid_not_c = np.load(valid_click_path)

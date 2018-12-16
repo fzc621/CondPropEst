@@ -26,7 +26,7 @@ $python -m src.extract_click -m ${max_rk} "${DATA_DIR}/test_queries_multi.tsv" \
 model_dir="${res_dir}/pbm"
 mkdir -p ${model_dir}
 $python -m src.arxiv_obj.pbm -m ${max_rk} "${DATA_DIR}/train.click.npy" \
-  "${DATA_DIR}/test.click.npy" "${model_DIR}/test_loss.txt"
+  "${DATA_DIR}/test.click.npy" "${model_dir}/test_loss.txt"
 
 ns="16 32 64 128"
 # === CPBM: Full Features ===
@@ -78,7 +78,7 @@ do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n2} complex "${DATA_DIR}" "${mlp_dir}" \
-      &> "${model_dir}/${n1}_${n2}.log" &
+      &> "${model_dir}/${n1}_${n2}.log"
   done
 done
 
@@ -105,7 +105,7 @@ do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n2} query_len "${DATA_DIR}" "${mlp_dir}" \
-      &> "${model_dir}/${n1}_${n2}.log" &
+      &> "${model_dir}/${n1}_${n2}.log"
   done
 done
 
@@ -132,7 +132,7 @@ do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n2} session "${DATA_DIR}" "${mlp_dir}" \
-     &> "${model_dir}/${n1}_${n2}.log" &
+     &> "${model_dir}/${n1}_${n2}.log"
   done
 done
 
@@ -159,7 +159,7 @@ do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n2} num_results "${DATA_DIR}" "${mlp_dir}" \
-     &> "${model_dir}/${n1}_${n2}.log" &
+     &> "${model_dir}/${n1}_${n2}.log"
   done
 done
 
@@ -186,6 +186,6 @@ do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
        -n1 ${n1} -n2 ${n2} result_proportion "${DATA_DIR}" "${mlp_dir}" \
-      &> "${model_dir}/${n1}_${n2}.log" &
+      &> "${model_dir}/${n1}_${n2}.log"
   done
 done

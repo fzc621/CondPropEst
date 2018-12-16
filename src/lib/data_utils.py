@@ -18,9 +18,8 @@ def load_query(path):
                 queries[-1].append((rel, toks[2]))
     return queries
 
-def load_rel_query(path, dim):
+def load_rel_query(path, dim, indices):
     queries = []
-    indices = [362, 431, 0, 689, 425, 646, 536, 407, 344, 19]
     X, y, qids = load_svmlight_file(path, query_id=True)
     last_qid = 0
     temp_X = []

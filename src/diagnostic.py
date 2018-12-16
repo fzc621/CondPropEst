@@ -12,7 +12,7 @@ from .lib.utils import *
 from collections import Counter
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='simulate the clicks')
+    parser = argparse.ArgumentParser(description='select the useful relevance model')
     parser.add_argument('data_path', help='data path')
     parser.add_argument('score_path', help='score path')
     parser.add_argument('feat_path', help='feature path')
@@ -52,6 +52,6 @@ if __name__ == '__main__':
         abs_coef = np.abs(clf.coef_).flatten()
         W = np.maximum(W, abs_coef)
 
-    print(list(reversed(np.argsort(W)))[:10])
+    print(list(reversed(np.argsort(W)))[:30])
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))

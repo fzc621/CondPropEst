@@ -7,7 +7,7 @@ import timeit
 import numpy as np
 import argparse
 from .lib.data_utils import Query, load_query, dump_feat, load_rel_query
-from .lib.utils import makedirs
+from .lib.utils import makedirs, read_idx
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('-st', type=float, help='strength of relevance')
     parser.add_argument('-d', default=10, type=int,
         help='#dimension of feature')
+    parser.add_argument('idx_path', help='idx list path')
     parser.add_argument('data_path', help='data path')
     parser.add_argument('output_dir', help='output dir')
     args = parser.parse_args()
@@ -22,8 +23,8 @@ if __name__ == '__main__':
     random.seed()
     np.random.seed()
     start = timeit.default_timer()
-
-    queries = load_rel_query(args.data_path, args.d)
+    index = read_idx(args.idx_path, args.d)
+    queries = load_rel_query(args.data_path, args.d, index)
     num_rel = int(args.d * args.st)
     num_rnd = args.d - num_rel
     for query in queries:
