@@ -35,13 +35,13 @@ dim="70"
 echo 'Full features'
 $python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
   --session --num_results --result_proportion "${DATA_DIR}/train_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.full.feat.npy"
+  "${DATA_DIR}/train.full.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
   --session --num_results --result_proportion "${DATA_DIR}/valid_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.full.feat.npy"
+  "${DATA_DIR}/valid.full.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --complex --query_len \
   --session --num_results --result_proportion "${DATA_DIR}/test_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.full.feat.npy"
+  "${DATA_DIR}/test.full.feat.npy"
 
 mkdir -p ${model_dir}
 for n1 in ${ns}
@@ -61,14 +61,11 @@ model_dir="${res_dir}/complex"
 dim="10"
 echo 'complex features'
 $python -m src.generate_feat -m ${max_rk} --complete --complex \
-  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/train.complex.feat.npy"
+  "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}/train.complex.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --complex\
-  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/valid.complex.feat.npy"
+  "${DATA_DIR}/valid_queries_multi.tsv" "${DATA_DIR}/valid.complex.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --complex \
-  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/test.complex.feat.npy"
+  "${DATA_DIR}/test_queries_multi.tsv" "${DATA_DIR}/test.complex.feat.npy"
 
 mkdir -p ${model_dir}
 for n1 in ${ns}
@@ -88,14 +85,11 @@ model_dir="${res_dir}/query_len"
 dim="10"
 echo 'query_len features'
 $python -m src.generate_feat -m ${max_rk} --complete --query_len \
-  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/train.query_len.feat.npy"
+  "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}/train.query_len.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --query_len\
-  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/valid.query_len.feat.npy"
+  "${DATA_DIR}/valid_queries_multi.tsv" "${DATA_DIR}/valid.query_len.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --query_len \
-  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/test.query_len.feat.npy"
+  "${DATA_DIR}/test_queries_multi.tsv" "${DATA_DIR}/test.query_len.feat.npy"
 
 mkdir -p ${model_dir}
 for n1 in ${ns}
@@ -115,14 +109,11 @@ model_dir="${res_dir}/session"
 dim="5"
 echo 'session features'
 $python -m src.generate_feat -m ${max_rk} --complete --session \
-  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/train.session.feat.npy"
+  "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}/train.session.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --session\
-  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/valid.session.feat.npy"
+  "${DATA_DIR}/valid_queries_multi.tsv" "${DATA_DIR}/valid.session.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --session \
-  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/test.session.feat.npy"
+  "${DATA_DIR}/test_queries_multi.tsv" "${DATA_DIR}/test.session.feat.npy"
 
 mkdir -p ${model_dir}
 for n1 in ${ns}
@@ -142,14 +133,11 @@ model_dir="${res_dir}/num_results"
 dim="10"
 echo 'num of results features'
 $python -m src.generate_feat -m ${max_rk} --complete --num_results \
-  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/train.num_results.feat.npy"
+  "${DATA_DIR}/train_queries_multi.tsv" "${DATA_DIR}/train.num_results.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --num_results\
-  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/valid.num_results.feat.npy"
+  "${DATA_DIR}/valid_queries_multi.tsv" "${DATA_DIR}/valid.num_results.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --num_results \
-  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
-  "${DATA_DIR}/test.num_results.feat.npy"
+  "${DATA_DIR}/test_queries_multi.tsv" "${DATA_DIR}/test.num_results.feat.npy"
 
 mkdir -p ${model_dir}
 for n1 in ${ns}
@@ -169,13 +157,13 @@ model_dir="${res_dir}/result_proportion"
 dim="35"
 echo 'result proportion features'
 $python -m src.generate_feat -m ${max_rk} --complete --result_proportion \
-  "${DATA_DIR}/train_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/train_queries_multi.tsv" \
   "${DATA_DIR}/train.result_proportion.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --result_proportion\
-  "${DATA_DIR}/valid_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/valid_queries_multi.tsv" \
   "${DATA_DIR}/valid.result_proportion.feat.npy"
 $python -m src.generate_feat -m ${max_rk} --complete --result_proportion \
-  "${DATA_DIR}/test_queries_multi.tsv" "$DATASET_DIR/clicks_multi.tsv" \
+  "${DATA_DIR}/test_queries_multi.tsv" \
   "${DATA_DIR}/test.result_proportion.feat.npy"
 
 mkdir -p ${model_dir}

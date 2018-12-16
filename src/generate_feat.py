@@ -48,7 +48,6 @@ if __name__ == '__main__':
     parser.add_argument('--num_results', action='store_true')
     parser.add_argument('--result_proportion', action='store_true')
     parser.add_argument('query_path', help='query path')
-    parser.add_argument('click_path', help='click path')
     parser.add_argument('feat_path', help='feat path')
 
     args = parser.parse_args()
@@ -56,7 +55,6 @@ if __name__ == '__main__':
 
     M = args.m
     query_path = args.query_path
-    click_path = args.click_path
 
     art_cat2idx = {}
     for article_categorie in article_categories:
