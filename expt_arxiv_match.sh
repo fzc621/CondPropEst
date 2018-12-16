@@ -69,7 +69,7 @@ mlp_dir="${model_dir}/mlp"
 #   for n2 in ${ns}
 #   do
 #     $python -m src.arxiv_match.cpbm_prop -m ${max_rk} -d ${dim} \
-#        -n1 ${n1} -n2 ${n1} train mlp "${DATA_DIR}" \
+#        -n1 ${n1} -n2 ${n2} train mlp "${DATA_DIR}" \
 #        "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/train_${n1}_${n2}.log"&
 #   done
 # done
@@ -81,7 +81,7 @@ mlp_dir="${model_dir}/mlp"
 #   for n2 in ${ns}
 #   do
 #     $python -m src.arxiv_match.cpbm_prop -m ${max_rk} -d ${dim} \
-#       -n1 ${n1} -n2 ${n1} valid mlp "${DATA_DIR}" \
+#       -n1 ${n1} -n2 ${n2} valid mlp "${DATA_DIR}" \
 #       "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/valid_${n1}_${n2}.log" &
 #   done
 # done

@@ -50,7 +50,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} full "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} full "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log"
   done
 done
@@ -77,7 +77,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} complex "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} complex "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -104,7 +104,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} query_len "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} query_len "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -131,7 +131,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} session "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} session "${DATA_DIR}" "${mlp_dir}" \
      &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -158,7 +158,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} num_results "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} num_results "${DATA_DIR}" "${mlp_dir}" \
      &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
@@ -185,7 +185,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n1} result_proportion "${DATA_DIR}" "${mlp_dir}" \
+       -n1 ${n1} -n2 ${n2} result_proportion "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log" &
   done
 done
