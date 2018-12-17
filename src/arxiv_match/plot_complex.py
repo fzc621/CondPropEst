@@ -11,7 +11,7 @@ plt.style.use('classic')
 def plot_mean_and_CI(mean, lb, ub, color_mean=None, color_shading=None, label=None):
     plt.fill_between(range(1, 22), ub, lb,
                      color=color_shading, alpha=.3)
-    plt.plot(range(1, 22), mean, color_mean, linewidth=2, label=label)
+    plt.plot(range(1, 22), mean, color_mean, linewidth=1, label=label)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='plot')

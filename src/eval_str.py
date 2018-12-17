@@ -24,49 +24,49 @@ if __name__ == '__main__':
                 if not c.name.startswith('.') and c.is_dir()]
     columns = sorted([c.name for c in params], key=float)
 
-    wo_metric = {}
-    mlp_metric = {}
-    rel_metric = {}
+    pbm_metric = {}
+    cpbm_wo_rel_metric = {}
+    cpbm_metric = {}
     imp_metric = {}
 
     for col in columns:
-        wo_metric[col] = {}
-        mlp_metric[col] = {}
-        rel_metric[col] = {}
+        pbm_metric[col] = {}
+        cpbm_wo_rel_metric[col] = {}
+        cpbm_metric[col] = {}
         imp_metric[col] = {}
-        for i in range(1, args.k):
+        for i in range(args.k):
             run_key = '#{}'.format(i)
             run_dir = os.path.join(args.str_dir, '{}/strength'.format(i))
 
-            wo_model_path = os.path.join(run_dir,
-                        '{}/result/wo_cond'.format(col))
-            wo_err = read_err(wo_model_path, 'test')
-            prop_model_path = find_best_prop_model(os.path.join(run_dir,
+            pbm_model_path = os.path.join(run_dir,
+                        '{}/result/pbm'.format(col))
+            pbm_err = read_err(pbm_model_path, 'test')
+            cpbm_wo_rel_model_path = find_best_prop_model(os.path.join(run_dir,
                         '{}/result/mlp'.format(col)))
-            mlp_err = read_err(prop_model_path, 'test')
-            rel_model_path = find_best_rel_model(os.path.join(run_dir,
+            cpbm_wo_rel_err = read_err(cpbm_wo_rel_model_path, 'test')
+            cpbm_model_path = find_best_rel_model(os.path.join(run_dir,
                         '{}/result/mlp_rel'.format(col)))
-            rel_err = read_err(rel_model_path, 'test')
-            wo_metric[col][run_key] = wo_err
-            mlp_metric[col][run_key] = mlp_err
-            rel_metric[col][run_key] = rel_err
-            imp_metric[col][run_key] = 1 - rel_err / mlp_err
+            cpbm_err = read_err(cpbm_model_path, 'test')
+            pbm_metric[col][run_key] = pbm_err
+            cpbm_wo_rel_metric[col][run_key] = cpbm_wo_rel_err
+            cpbm_metric[col][run_key] = cpbm_err
+            imp_metric[col][run_key] = 1 - cpbm_err / cpbm_wo_rel_err
 
 
-    wo_metric_df = pd.DataFrame(wo_metric, columns=columns, dtype='float64')
-    wo_metric_df.loc['avg'] = wo_metric_df.mean()
-    wo_metric_df.loc['std'] = wo_metric_df.std()
-    wo_metric_df.to_csv(os.path.join(args.str_dir, 'wo_result.csv'), float_format='%.6f')
+    pbm_metric_df = pd.DataFrame(pbm_metric, columns=columns, dtype='float64')
+    pbm_metric_df.loc['avg'] = pbm_metric_df.mean()
+    pbm_metric_df.loc['std'] = pbm_metric_df.std()
+    pbm_metric_df.to_csv(os.path.join(args.str_dir, 'pbm_result.csv'), float_format='%.6f')
 
-    mlp_metric_df = pd.DataFrame(mlp_metric, columns=columns, dtype='float64')
-    mlp_metric_df.loc['avg'] = mlp_metric_df.mean()
-    mlp_metric_df.loc['std'] = mlp_metric_df.std()
-    mlp_metric_df.to_csv(os.path.join(args.str_dir, 'mlp_result.csv'), float_format='%.6f')
+    cpbm_wo_rel_metric_df = pd.DataFrame(cpbm_wo_rel_metric, columns=columns, dtype='float64')
+    cpbm_wo_rel_metric_df.loc['avg'] = cpbm_wo_rel_metric_df.mean()
+    cpbm_wo_rel_metric_df.loc['std'] = cpbm_wo_rel_metric_df.std()
+    cpbm_wo_rel_metric_df.to_csv(os.path.join(args.str_dir, 'cpbm_wo_rel_result.csv'), float_format='%.6f')
 
-    rel_metric_df = pd.DataFrame(rel_metric, columns=columns, dtype='float64')
-    rel_metric_df.loc['avg'] = rel_metric_df.mean()
-    rel_metric_df.loc['std'] = rel_metric_df.std()
-    rel_metric_df.to_csv(os.path.join(args.str_dir, 'rel_result.csv'), float_format='%.6f')
+    cpbm_metric_df = pd.DataFrame(cpbm_metric, columns=columns, dtype='float64')
+    cpbm_metric_df.loc['avg'] = cpbm_metric_df.mean()
+    cpbm_metric_df.loc['std'] = cpbm_metric_df.std()
+    cpbm_metric_df.to_csv(os.path.join(args.str_dir, 'cpbm_result.csv'), float_format='%.6f')
 
     imp_metric_df = pd.DataFrame(imp_metric, columns=columns, dtype='float64')
     imp_metric_df.loc['avg'] = imp_metric_df.mean()
@@ -76,8 +76,8 @@ if __name__ == '__main__':
     plt.figure()
     plt.xlabel('Strength of Relevance Dependence')
     plt.ylabel('Relative Error')
-    # plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.')
-    # plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-')
+    # plt.errorbar(columns, pbm_metric_df.loc['avg'], label='PBM', yerr=pbm_metric_df.loc['std'], fmt='3-.')
+    # plt.errorbar(columns, cpbm_metric_df.loc['avg'], label='CPBM', color='red', yerr=cpbm_metric_df.loc['std'], fmt='+-')
     # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
     plt.errorbar(columns, imp_metric_df.loc['avg'], label='Improvement')
     plt.legend(frameon=False, loc='upper left')
