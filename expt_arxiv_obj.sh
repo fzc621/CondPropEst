@@ -15,20 +15,20 @@ max_rk="21"
 
 # === Implicit Intervention ===
 res_dir="${expt_dir}/result"
-$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.click.npy"
-$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.click.npy"
-$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/test_queries_multi.tsv" \
-  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.click.npy"
+#$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/train_queries_multi.tsv" \
+#  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/train.click.npy"
+#$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/valid_queries_multi.tsv" \
+#  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/valid.click.npy"
+#$python -m src.extract_click -m ${max_rk} "${DATA_DIR}/test_queries_multi.tsv" \
+#  "$DATASET_DIR/clicks_multi.tsv" "${DATA_DIR}/test.click.npy"
 
 # === PBM ===
 model_dir="${res_dir}/pbm"
 mkdir -p ${model_dir}
-$python -m src.arxiv_obj.pbm -m ${max_rk} "${DATA_DIR}/train.click.npy" \
-  "${DATA_DIR}/test.click.npy" "${model_dir}/test_loss.txt"
+#$python -m src.arxiv_obj.pbm -m ${max_rk} "${DATA_DIR}/train.click.npy" \
+#  "${DATA_DIR}/test.click.npy" "${model_dir}/test_loss.txt"
 
-ns="16 32 64 128"
+ns="64 128"
 # === CPBM: Full Features ===
 model_dir="${res_dir}/full"
 dim="70"
@@ -55,7 +55,7 @@ do
   done
 done
 
-wait
+ns="8 16"
 # === CPBM: Complex Features ===
 model_dir="${res_dir}/complex"
 dim="10"
@@ -79,7 +79,7 @@ do
   done
 done
 
-wait
+ns="8 16"
 # === CPBM: Query-Length Features ===
 model_dir="${res_dir}/query_len"
 dim="10"
@@ -103,7 +103,7 @@ do
   done
 done
 
-wait
+ns="8 16"
 # === CPBM: Session Features ===
 model_dir="${res_dir}/session"
 dim="5"
@@ -127,7 +127,7 @@ do
   done
 done
 
-wait
+ns="8 16"
 # === CPBM: Num_of_results Features ===
 model_dir="${res_dir}/num_results"
 dim="10"
@@ -151,7 +151,7 @@ do
   done
 done
 
-wait
+ns="32 64"
 # === CPBM: R Features ===
 model_dir="${res_dir}/result_proportion"
 dim="35"
