@@ -6,4 +6,4 @@
 #
 # python -m src.eval_sweep -k 6 data/set1bin/expt/sweep
 
-python -m src.eval_str -k 10 data/set1bin/expt/strength
+python -m src.eval_str -k 20 data/set1bin/expt/strength

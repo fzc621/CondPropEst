@@ -50,7 +50,7 @@ if __name__ == '__main__':
             pbm_metric[col][run_key] = pbm_err
             cpbm_wo_rel_metric[col][run_key] = cpbm_wo_rel_err
             cpbm_metric[col][run_key] = cpbm_err
-            imp_metric[col][run_key] = 1 - cpbm_err / cpbm_wo_rel_err
+            imp_metric[col][run_key] = cpbm_wo_rel_err - cpbm_err
 
 
     pbm_metric_df = pd.DataFrame(pbm_metric, columns=columns, dtype='float64')
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.xlabel('Strength of Relevance Dependence')
-    plt.ylabel('Relative Error')
+    plt.ylabel('Error Reduction')
     # plt.errorbar(columns, pbm_metric_df.loc['avg'], label='PBM', yerr=pbm_metric_df.loc['std'], fmt='3-.')
     # plt.errorbar(columns, cpbm_metric_df.loc['avg'], label='CPBM', color='red', yerr=cpbm_metric_df.loc['std'], fmt='+-')
     # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
