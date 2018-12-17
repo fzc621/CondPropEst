@@ -29,10 +29,10 @@ def bootstrap(D, M, c, not_c, feat, n1, n2, output_dir):
         model = mlp_rel.MLP(D, M, n1, n2)
         tf.global_variables_initializer().run()
         best_loss = math.inf
-        for epoch in range(1000):
+        for epoch in range(2000):
             train_loss, _ = sess.run([model.loss, model.train_op],
-                    feed_dict={model.x:feat, model.c:c,
-                                model.not_c: not_c})
+                    feed_dict={model.x:bs_feat, model.c:bs_c,
+                                model.not_c: bs_not_c})
             if train_loss < best_loss:
                 best_loss = train_loss
                 model.saver.save(sess, '{}/checkpoint'.format(output_dir),
