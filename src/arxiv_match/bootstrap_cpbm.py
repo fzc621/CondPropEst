@@ -51,7 +51,6 @@ if __name__ == '__main__':
     parser.add_argument('-n2', default=16, type=int,
         help='number of relevance hidden layer')
     parser.add_argument('data_dir', help='data dir')
-    parser.add_argument('mlp_dir', help='mlp dir')
     parser.add_argument('output_dir', help='output dir')
     args = parser.parse_args()
     start = timeit.default_timer()

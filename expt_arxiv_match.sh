@@ -18,7 +18,7 @@ max_rk="21"
 
 # === Swap Intervention ===
 # echo '=== Swap Intervention ==='
-# model_dir="${expt_dir}/swap"
+model_dir="${expt_dir}/swap"
 # $python -m src.arxiv_match.split_arxiv "${DATASET_DIR}/queries_multi_swap.tsv" "${DATA_DIR}"
 #
 # $python -m src.arxiv_match.swap_prop -m ${max_rk} "${DATA_DIR}/complex_queries_multi_swap.tsv" \
@@ -86,8 +86,10 @@ mlp_dir="${model_dir}/mlp"
 #   done
 # done
 
-for i in $(seq 0 999)
-do
-  $python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} "${DATA_DIR}" \
-    "${mlp_dir}" "${model_dir}/result/${i}"
-done
+# for i in $(seq 0 999)
+# do
+#   $python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} "${DATA_DIR}" \
+#     "${model_dir}/result/${i}"
+# done
+# $python -m src.arxiv_match.merge_cpbm -m ${max_rk} "${model_dir}/result"
+$python -m src.arxiv_match.plot_complex "${model_dir}/result" "${expt_dir}/cpbm.pdf"
