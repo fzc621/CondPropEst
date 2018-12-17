@@ -12,7 +12,7 @@ run()
 }
 
 
-for i in $(seq 0 9); do
+for i in $(seq 0 19); do
   	echo "Run = ${i}"
   	run "sh expt.sh strength $i"
 done
