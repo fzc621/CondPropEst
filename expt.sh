@@ -199,6 +199,9 @@ for st in $sts; do
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
       	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat"
     done
+
+    rm -rf "${DATA_DIR}"
+    
     for model in pbm cpbm gt
     do
       for c in ${cs}
