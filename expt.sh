@@ -201,14 +201,14 @@ for st in $sts; do
     done
 
     rm -rf "${DATA_DIR}"
-    
+
     for model in pbm cpbm gt
     do
       for c in ${cs}
       do
         for t in ${ts}
         do
-            ${prop_svm_learn} -c $C "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+            ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
         done
         wait
       done
