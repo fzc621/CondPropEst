@@ -155,7 +155,7 @@ for st in $sts; do
   do
     for n2 in ${ns}
     do
-      model_dir="${res_dir}/mlp_rel/${n1}/${n2}"
+      model_dir="${res_dir}/cpbm/${n1}/${n2}"
       mkdir -p ${model_dir}
       echo "N1 = ${n1} N2 = ${n2}"
       $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
@@ -223,8 +223,8 @@ for st in $sts; do
       do
         for t in ${ts}
         do
-            ${prop_svm_classify} "${learn_dir}/valid.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/valid_${model}_t${t}_c${c}.log" &
-            ${prop_svm_classify} "${learn_dir}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/test_${model}_t${t}_c${c}.log" &
+            ${prop_svm_classify} "${DATASET_DIR}/valid.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/valid_${model}_t${t}_c${c}.log" &
+            ${prop_svm_classify} "${DATASET_DIR}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/test_${model}_t${t}_c${c}.log" &
         done
       done
     done
