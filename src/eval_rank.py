@@ -50,7 +50,7 @@ if __name__ == '__main__':
     metric_df.to_csv(os.path.join(args.data_dir, 'rank.csv'), float_format='%.6f')
 
     plt.figure()
-    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'], fmt='bo-')
+    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'], fmt='bx-')
     plt.xticks(columns, columns)
     plt.xlabel('Position')
     plt.ylabel('Relative Error')

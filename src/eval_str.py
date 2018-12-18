@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     start = timeit.default_timer()
 
-    params = [c for c in os.scandir('{}/1/strength'.format(args.str_dir))
+    params = [c for c in os.scandir('{}/0/strength'.format(args.str_dir))
                 if not c.name.startswith('.') and c.is_dir()]
     columns = sorted([c.name for c in params], key=float)
 
@@ -79,8 +79,7 @@ if __name__ == '__main__':
     # plt.errorbar(columns, pbm_metric_df.loc['avg'], label='PBM', yerr=pbm_metric_df.loc['std'], fmt='3-.')
     # plt.errorbar(columns, cpbm_metric_df.loc['avg'], label='CPBM', color='red', yerr=cpbm_metric_df.loc['std'], fmt='+-')
     # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
-    plt.errorbar(columns, imp_metric_df.loc['avg'], label='Improvement')
-    plt.legend(frameon=False, loc='upper left')
+    plt.errorbar(columns, imp_metric_df.loc['avg'], fmt='+-', ms=10)
     plt.xticks(columns, columns)
     x0, x1, y0, y1 = plt.axis()
     plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))

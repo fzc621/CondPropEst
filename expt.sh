@@ -110,7 +110,7 @@ for st in $sts; do
   mkdir -p ${model_dir}
   echo 'Estimating without query feature'
   $python -m src.model.pbm -n 10 --log_dir ${log_dir} --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/train.txt"
-  $python -m src.model.pbm --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
+  # $python -m src.model.pbm --test --gt_dir ${ground_truth_dir} ${model_dir} > "${model_dir}/test.txt"
 
   # === CPBM without relevance ==
   # echo 'Estimating without relevance model...'
@@ -132,22 +132,22 @@ for st in $sts; do
   # $python -m src.model.ann -m 10 -d ${dim} -n1 9 -n2 11 --gt_dir ${ground_truth_dir} \
   #   test mlp_rel ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
 
-  if [[ "$1" -ne "learn" ]]; then
-    # === mlp without relevance ==
-    echo 'Estimating without relevance model...'
-    for n1 in ${ns}
-    do
-      model_dir="${res_dir}/mlp/${n1}"
-      mkdir -p ${model_dir}
-      echo "N1 = ${n1}"
-      $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-        train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
-      $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-        valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-      $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
-        test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
-    done
-  fi
+  # if [[ "$1" -ne "learn" ]]; then
+  #   # === mlp without relevance ==
+  #   echo 'Estimating without relevance model...'
+  #   for n1 in ${ns}
+  #   do
+  #     model_dir="${res_dir}/mlp/${n1}"
+  #     mkdir -p ${model_dir}
+  #     echo "N1 = ${n1}"
+  #     $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #       train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
+  #     $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #       valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
+  #     $python -m src.model.ann -m 10 -d ${dim} -n1 ${n1} --gt_dir ${ground_truth_dir} \
+  #       test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+  #   done
+  # fi
 
   # === mlp with relevance ===
   echo 'Estimating with relevance model...'
@@ -162,8 +162,8 @@ for st in $sts; do
         train mlp ${NPY_DIR} ${model_dir} > "${model_dir}/train.txt"
       $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
         valid mlp ${NPY_DIR} ${model_dir} > "${model_dir}/valid.txt"
-      $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
-        test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
+      # $python -m src.model.ann -m 10 -d 10 -n1 ${n1} -n2 ${n2} --gt_dir ${ground_truth_dir} \
+      #   test mlp ${NPY_DIR} ${model_dir} > "${model_dir}/test.txt"
     done
   done
 
@@ -177,33 +177,28 @@ for st in $sts; do
     model_dir="${res_dir}/pbm"
     for t in ${ts}
     do
-      $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+      $python -m src.generate_train_data -t ${t} "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat" &
+      	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat"
     done
 
     # === CPBM ===
     model_dir="${res_dir}/cpbm"
     for t in ${ts}
     do
-      $python -m src.generate_train_data -t ${t} "${model_dir}/set1bin.train.prop.txt" \
+      $python -m src.generate_train_data -t ${t} --cpbm "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat" &
+      	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat"
     done
 
     # === True propensity ===
     model_dir=${ground_truth_dir}
     for t in ${ts}
     do
-      $python -m src.generate_train_data -t ${t} --gt "${model_dir}/set1bin.train.prop.txt" \
+      $python -m src.generate_train_data -t ${t} --gt "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
+      	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat"
     done
-    $python -m src.generate_test_data "${DATASET_DIR}/set1bin.valid.txt" "${learn_dir}/valid.dat" &
-    $python -m src.generate_test_data "${DATASET_DIR}/set1bin.test.txt" "${learn_dir}/test.dat" &
-
-    wait
-
     for model in pbm cpbm gt
     do
       for c in ${cs}
@@ -212,10 +207,9 @@ for st in $sts; do
         do
             ${prop_svm_learn} -c $C "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
         done
+        wait
       done
     done
-
-    wait
 
     for model in pbm cpbm gt
     do
@@ -226,6 +220,7 @@ for st in $sts; do
             ${prop_svm_classify} "${DATASET_DIR}/valid.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/valid_${model}_t${t}_c${c}.log" &
             ${prop_svm_classify} "${DATASET_DIR}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/test_${model}_t${t}_c${c}.log" &
         done
+        wait
       done
     done
   fi
