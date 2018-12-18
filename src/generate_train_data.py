@@ -50,7 +50,7 @@ if __name__ == '__main__':
     else:
         prop_dir = args.prop_dir
 
-    os.path.join(prop_dir, 'set1bin.train.prop.txt')
+    prop_path = os.path.join(prop_dir, 'set1bin.train.prop.txt')
     if args.gt:
         est = load_prop(prop_path)
     else:
