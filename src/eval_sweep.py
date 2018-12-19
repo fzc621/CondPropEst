@@ -23,7 +23,7 @@ if __name__ == '__main__':
     params = [c for c in os.scandir(args.sweep_dir)
                 if not c.name.startswith('.') and c.is_dir()]
     columns = sorted([c.name for c in params], key=float)
-    num_columns = [int(float(s) * 19745) for s in columns]
+    num_columns = [int(float(s) * 11473) for s in columns]
     k = args.k
     wo_metric = {}
     mlp_metric = {}
@@ -37,7 +37,7 @@ if __name__ == '__main__':
             run_dir = os.path.join(args.sweep_dir, '{}/{}'.format(col, i))
 
             wo_model_path = os.path.join(run_dir,
-                        'result/wo_cond')
+                        'result/pbm')
             wo_err = read_err(wo_model_path, 'test')
             prop_model_path = find_best_prop_model(os.path.join(run_dir,
                         'result/mlp'))

@@ -70,7 +70,7 @@ mlp_dir="${model_dir}/mlp"
 #   do
 #     $python -m src.arxiv_match.cpbm_prop -m ${max_rk} -d ${dim} \
 #        -n1 ${n1} -n2 ${n2} train mlp "${DATA_DIR}" \
-#        "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/train_${n1}_${n2}.log"&
+#        "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/train_${n1}_${n2}.log" &
 #   done
 # done
 #
@@ -85,11 +85,11 @@ mlp_dir="${model_dir}/mlp"
 #       "${mlp_dir}/${n1}_${n2}" &> "${mlp_dir}/valid_${n1}_${n2}.log" &
 #   done
 # done
-
-# for i in $(seq 0 999)
-# do
-#   $python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} "${DATA_DIR}" \
-#     "${model_dir}/result/${i}"
-# done
+#
+for i in $(seq 0 999)
+do
+  $python -m src.arxiv_match.bootstrap_cpbm -m ${max_rk} "${DATA_DIR}" \
+    "${model_dir}/result/${i}"
+done
 # $python -m src.arxiv_match.merge_cpbm -m ${max_rk} "${model_dir}/result"
-$python -m src.arxiv_match.plot_complex "${model_dir}/result" "${expt_dir}/cpbm.pdf"
+# $python -m src.arxiv_match.plot_complex "${model_dir}/result" "${expt_dir}/cpbm.pdf"

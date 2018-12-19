@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     start = timeit.default_timer()
 
-    params = [c for c in os.scandir('{}/1/strength'.format(args.str_dir))
+    params = [c for c in os.scandir('{}/0/strength'.format(args.str_dir))
                 if not c.name.startswith('.') and c.is_dir()]
     columns = sorted([c.name for c in params], key=float)
 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
             pbm_metric[col][run_key] = pbm_err
             cpbm_wo_rel_metric[col][run_key] = cpbm_wo_rel_err
             cpbm_metric[col][run_key] = cpbm_err
-            imp_metric[col][run_key] = 1 - cpbm_err / cpbm_wo_rel_err
+            imp_metric[col][run_key] = cpbm_wo_rel_err - cpbm_err
 
 
     pbm_metric_df = pd.DataFrame(pbm_metric, columns=columns, dtype='float64')
@@ -75,12 +75,11 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.xlabel('Strength of Relevance Dependence')
-    plt.ylabel('Relative Error')
+    plt.ylabel('Error Reduction')
     # plt.errorbar(columns, pbm_metric_df.loc['avg'], label='PBM', yerr=pbm_metric_df.loc['std'], fmt='3-.')
     # plt.errorbar(columns, cpbm_metric_df.loc['avg'], label='CPBM', color='red', yerr=cpbm_metric_df.loc['std'], fmt='+-')
     # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
-    plt.errorbar(columns, imp_metric_df.loc['avg'], label='Improvement')
-    plt.legend(frameon=False, loc='upper left')
+    plt.errorbar(columns, imp_metric_df.loc['avg'], fmt='+-', ms=10)
     plt.xticks(columns, columns)
     x0, x1, y0, y1 = plt.axis()
     plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))

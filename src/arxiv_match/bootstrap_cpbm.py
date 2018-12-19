@@ -29,10 +29,10 @@ def bootstrap(D, M, c, not_c, feat, n1, n2, output_dir):
         model = mlp_rel.MLP(D, M, n1, n2)
         tf.global_variables_initializer().run()
         best_loss = math.inf
-        for epoch in range(1000):
+        for epoch in range(2000):
             train_loss, _ = sess.run([model.loss, model.train_op],
-                    feed_dict={model.x:feat, model.c:c,
-                                model.not_c: not_c})
+                    feed_dict={model.x:bs_feat, model.c:bs_c,
+                                model.not_c: bs_not_c})
             if train_loss < best_loss:
                 best_loss = train_loss
                 model.saver.save(sess, '{}/checkpoint'.format(output_dir),
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         description='Propensity Estimation via swap intervention')
     parser.add_argument('-m', type=int, help='max pos to be estimated')
     parser.add_argument('-d', default=1, type=int, help='dimension of feature')
-    parser.add_argument('-n1', default=32, type=int,
+    parser.add_argument('-n1', default=16, type=int,
         help='number of propensity hidden layer')
     parser.add_argument('-n2', default=16, type=int,
         help='number of relevance hidden layer')

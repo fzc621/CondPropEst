@@ -20,7 +20,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='generate data for Prop SVM')
     parser.add_argument('-t', default=1, type=float, help='clip parameter')
     parser.add_argument('--gt', action='store_true', help='for ground truth')
-    parser.add_argument('prop_path', help='prop path')
+    parser.add_argument('--cpbm', action='store_true', help='cpbm has to select the para')
+    parser.add_argument('prop_dir', help='prop dir')
     parser.add_argument('data_path', help='data_path')
     parser.add_argument('score_path', help='score path')
     parser.add_argument('log_path', help='click log path')
@@ -44,10 +45,16 @@ if __name__ == '__main__':
             doc_id = len(queries[-1]._docs)
             queries[-1].append((doc_id, score, rel, feat))
 
-    if args.gt:
-        est = load_prop(args.prop_path)
+    if args.cpbm:
+        prop_dir = find_best_rel_model(args.prop_dir)
     else:
-        est = np.loadtxt(args.prop_path)
+        prop_dir = args.prop_dir
+
+    prop_path = os.path.join(prop_dir, 'set1bin.train.prop.txt')
+    if args.gt:
+        est = load_prop(prop_path)
+    else:
+        est = np.loadtxt(prop_path)
     M = est.shape[1]
     log = load_log(args.log_path)
     num_query = est.shape[0]

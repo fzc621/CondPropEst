@@ -11,11 +11,11 @@ run()
   fi
 }
 
-weights="0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1"
+sweeps="1 2 5 10 20"
 
 for i in $(seq 0 5); do
-  for s in $weights; do
-  	echo "Context = ${s} Run = ${i}"
-  	run "sh ./expt.sh weight $s $i"
+  for s in $sweeps; do
+  	echo "#Sweep = ${s} Run = ${i}"
+  	run "sh ./expt.sh learn $s $i"
   done
 done

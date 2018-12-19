@@ -37,7 +37,7 @@ if __name__ == '__main__':
             run_dir = os.path.join(args.weight_dir, '{}/{}'.format(col, i))
 
             wo_model_path = os.path.join(run_dir,
-                        'result/wo_cond')
+                        'result/pbm')
             wo_err = read_err(wo_model_path, 'test')
             prop_model_path = find_best_prop_model(os.path.join(run_dir,
                         'result/mlp'))
