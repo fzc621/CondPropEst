@@ -80,9 +80,9 @@ if __name__ == '__main__':
             else:
                 model_path = '{}/checkpoint-{}'.format(args.output_dir, args.inference_version)
             model.saver.restore(sess, model_path)
-            test_click_path = os.path.join(args.data_dir, 'test.click.npy')
+            test_click_path = os.path.join(args.data_dir, 'valid.click.npy')
             test_c, test_not_c = np.load(test_click_path)
-            test_feat_path = os.path.join(args.data_dir, 'test.feat.npy')
+            test_feat_path = os.path.join(args.data_dir, 'valid.feat.npy')
             X_test = np.load(test_feat_path)
 
             test_loss = sess.run([model.loss], feed_dict={model.x:X_test,

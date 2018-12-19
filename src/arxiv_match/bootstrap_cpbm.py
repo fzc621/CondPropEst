@@ -46,7 +46,7 @@ if __name__ == '__main__':
         description='Propensity Estimation via swap intervention')
     parser.add_argument('-m', type=int, help='max pos to be estimated')
     parser.add_argument('-d', default=1, type=int, help='dimension of feature')
-    parser.add_argument('-n1', default=32, type=int,
+    parser.add_argument('-n1', default=16, type=int,
         help='number of propensity hidden layer')
     parser.add_argument('-n2', default=16, type=int,
         help='number of relevance hidden layer')
