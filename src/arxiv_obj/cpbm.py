@@ -51,7 +51,7 @@ if __name__ == '__main__':
             tf.global_variables_initializer().run()
 
         best_loss = math.inf
-        for epoch in range(10000):
+        for epoch in range(20000):
             train_loss, _ = sess.run([model.loss, model.train_op],
                     feed_dict={model.x:X_train, model.c:train_c,
                                model.not_c: train_not_c})
