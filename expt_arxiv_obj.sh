@@ -50,7 +50,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n2} full "${DATA_DIR}" "${mlp_dir}" \
+       --epoch 20000 -n1 ${n1} -n2 ${n2} full "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log"
   done
 done
@@ -173,7 +173,7 @@ do
   do
     mlp_dir="${model_dir}/${n1}_${n2}"
     $python -m src.arxiv_obj.cpbm -m ${max_rk} -d ${dim} \
-       -n1 ${n1} -n2 ${n2} result_proportion "${DATA_DIR}" "${mlp_dir}" \
+       --epoch 20000 -n1 ${n1} -n2 ${n2} result_proportion "${DATA_DIR}" "${mlp_dir}" \
       &> "${model_dir}/${n1}_${n2}.log"
   done
 done

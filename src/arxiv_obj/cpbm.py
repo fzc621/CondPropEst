@@ -23,6 +23,8 @@ if __name__ == '__main__':
         help='dimension of feature')
     parser.add_argument('-i', '--inference_version', default=0, type=int,
         help='inference version')
+    parser.add_argument('--epoch', default=10000, type=int,
+        help='#epoch')
     parser.add_argument('-n1', default=32, type=int,
         help='number of propensity hidden layer')
     parser.add_argument('-n2', default=32, type=int,
@@ -51,7 +53,7 @@ if __name__ == '__main__':
             tf.global_variables_initializer().run()
 
         best_loss = math.inf
-        for epoch in range(20000):
+        for epoch in range(args.epoch):
             train_loss, _ = sess.run([model.loss, model.train_op],
                     feed_dict={model.x:X_train, model.c:train_c,
                                model.not_c: train_not_c})
