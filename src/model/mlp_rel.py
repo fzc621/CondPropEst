@@ -54,7 +54,7 @@ class MLP(object):
 
         r_symm = tf.div(tf.add(r_, tf.matrix_transpose(r_)), 2.0)
 
-        self.pr = tf.clip_by_value(tf.reshape(p_,(-1, M, 1)) * r_symm, l, r)
+        self.pr = tf.clip_by_value(tf.reshape(p_,(-1, M, 1)) * r_symm, l, h)
         self.loss = -tf.reduce_sum(tf.add(self.c * tf.log(self.pr), self.not_c * tf.log(1 - self.pr)))
 
         self.norm_p_ = tf.div(p_, tf.reshape(p_[:,0], (-1, 1)))
