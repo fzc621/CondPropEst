@@ -31,7 +31,7 @@ elif [[ "$1" == "sweep" ]]; then
   sts=${default_st}
 elif [[ "$1" == "learn" ]]; then
   sw="$2"
-  w="1"
+  w="10"
   sts=${default_st}
 elif [[ "$1" == "strength" ]]; then
   sw="5"
@@ -149,8 +149,8 @@ for st in $sts; do
   #   done
   # fi
 
-  # === mlp with relevance ===
-  echo 'Estimating with relevance model...'
+  # === CPBM ===
+  echo 'Estimating with CPBM...'
   for n1 in ${ns}
   do
     for n2 in ${ns}
@@ -202,18 +202,47 @@ for st in $sts; do
 
     rm -rf "${DATA_DIR}"
 
+    echo 'Start learning'
     for model in pbm cpbm gt
     do
-      for c in ${cs}
+      for c in 0.1 0.3
       do
         for t in ${ts}
         do
             ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
         done
-        wait
       done
+      wait
+
+      for c in 1 3
+      do
+        for t in ${ts}
+        do
+            ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+        done
+      done
+      wait
+
+      for c in 10 30
+      do
+        for t in ${ts}
+        do
+            ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+        done
+      done
+      wait
+
+
+      for t in ${ts}
+      do
+          ${prop_svm_learn} -c 100 "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+      done
+      wait
     done
 
+    rm "${learn_dir}/*.dat"
+
+    echo 'Start classifying'
     for model in pbm cpbm gt
     do
       for c in ${cs}
