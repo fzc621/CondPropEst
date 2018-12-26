@@ -98,6 +98,7 @@ for st in $sts; do
   wait
 
   echo 'Start to generate click logs...'
+  mkdir -p ${log_dir}
   for i in 0 1;
   do
     $python -m src.sim_click -s $sw -m power -d ${dim} -w $w "${expt_dir}/para.dat" \
