@@ -84,24 +84,27 @@ for st in $sts; do
   $python -m src.sim_feat -st ${st} -d ${dim} "${expt_dir}/index.pkl" \
     "${DATA_DIR}/set1bin.train.txt" $feat_dir
   $python -m src.sim_feat -st ${st} -d ${dim} "${expt_dir}/index.pkl" \
-    "${DATASET_DIR}/set1bin.valid.txt" $feat_dir
+    "${DATASET_DIR}/set1bin.valid.txt" $feat_dir &
   $python -m src.sim_feat -st ${st} -d ${dim} "${expt_dir}/index.pkl" \
-    "${DATASET_DIR}/set1bin.test.txt" $feat_dir
+    "${DATASET_DIR}/set1bin.test.txt" $feat_dir &
+  wait
 
   $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.train.feat.txt" \
     "${ground_truth_dir}/set1bin.train.prop.txt"
-  $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
-    "${ground_truth_dir}/set1bin.valid.prop.txt"
+  $python -m src.cal_prop -n 10 -d ${dim} -w $w " &${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
+    "${ground_truth_dir}/set1bin.valid.prop.txt" &
   $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.test.feat.txt" \
-    "${ground_truth_dir}/set1bin.test.prop.txt"
+    "${ground_truth_dir}/set1bin.test.prop.txt" &
+  wait
 
   echo 'Start to generate click logs...'
   for i in 0 1;
   do
     $python -m src.sim_click -s $sw -m power -d ${dim} -w $w "${expt_dir}/para.dat" \
       "${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score${i}.dat" \
-      "${feat_dir}/set1bin.train.feat.txt" "${log_dir}/train.log${i}.txt"
+      "${feat_dir}/set1bin.train.feat.txt" "${log_dir}/train.log${i}.txt" &
   done
+  wait
 
   $python -m src.data_process -m 10 -d ${dim} train ${log_dir} ${feat_dir} ${NPY_DIR}
 
@@ -179,7 +182,7 @@ for st in $sts; do
     do
       $python -m src.generate_train_data -t ${t} "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat"
+      	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat" &
     done
 
     # === CPBM ===
@@ -188,7 +191,7 @@ for st in $sts; do
     do
       $python -m src.generate_train_data -t ${t} --cpbm "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat"
+      	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat" &
     done
 
     # === True propensity ===
@@ -197,15 +200,25 @@ for st in $sts; do
     do
       $python -m src.generate_train_data -t ${t} --gt "${model_dir}" \
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
-      	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat"
+      	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
     done
 
+    wait
     rm -rf "${DATA_DIR}"
 
     echo 'Start learning'
     for model in pbm cpbm gt
     do
-      for c in 0.1 0.3 1 3
+      for c in 0.1 0.3
+      do
+        for t in ${ts}
+        do
+            ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
+        done
+      done
+      wait
+
+      for c in 1 3
       do
         for t in ${ts}
         do
