@@ -205,7 +205,7 @@ for st in $sts; do
     echo 'Start learning'
     for model in pbm cpbm gt
     do
-      for c in 0.1 0.3
+      for c in 0.1 0.3 1 3
       do
         for t in ${ts}
         do
@@ -214,33 +214,17 @@ for st in $sts; do
       done
       wait
 
-      for c in 1 3
+      for c in 10 30 100
       do
         for t in ${ts}
         do
             ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
         done
-      done
-      wait
-
-      for c in 10 30
-      do
-        for t in ${ts}
-        do
-            ${prop_svm_learn} -c $c "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
-        done
-      done
-      wait
-
-
-      for t in ${ts}
-      do
-          ${prop_svm_learn} -c 100 "${learn_dir}/${model}_train_t${t}.dat" "${learn_dir}/${model}_t${t}_c${c}.model" &> /dev/null &
       done
       wait
     done
 
-    rm "${learn_dir}/*.dat"
+    rm ${learn_dir}/*.dat
 
     echo 'Start classifying'
     for model in pbm cpbm gt
@@ -252,8 +236,8 @@ for st in $sts; do
             ${prop_svm_classify} "${DATASET_DIR}/valid.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/valid_${model}_t${t}_c${c}.log" &
             ${prop_svm_classify} "${DATASET_DIR}/test.dat" "${learn_dir}/${model}_t${t}_c${c}.model" | grep SNIPS &> "${learn_dir}/test_${model}_t${t}_c${c}.log" &
         done
-        wait
       done
+      wait
     done
   fi
 done
