@@ -185,6 +185,7 @@ for st in $sts; do
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
       	"${log_dir}/train.log0.txt" "${learn_dir}/pbm_train_t${t}.dat" &
     done
+    wait
 
     # === CPBM ===
     model_dir="${res_dir}/cpbm"
@@ -194,6 +195,7 @@ for st in $sts; do
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
       	"${log_dir}/train.log0.txt" "${learn_dir}/cpbm_train_t${t}.dat" &
     done
+    wait
 
     # === True propensity ===
     model_dir=${ground_truth_dir}
@@ -203,7 +205,6 @@ for st in $sts; do
       	"${DATA_DIR}/set1bin.train.txt" "${expt_dir}/train.score0.dat" \
       	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
     done
-
     wait
     rm -rf "${DATA_DIR}"
 
