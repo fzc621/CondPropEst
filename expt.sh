@@ -91,7 +91,7 @@ for st in $sts; do
 
   $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.train.feat.txt" \
     "${ground_truth_dir}/set1bin.train.prop.txt"
-  $python -m src.cal_prop -n 10 -d ${dim} -w $w " &${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
+  $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.valid.feat.txt" \
     "${ground_truth_dir}/set1bin.valid.prop.txt" &
   $python -m src.cal_prop -n 10 -d ${dim} -w $w "${expt_dir}/para.dat" "${feat_dir}/set1bin.test.feat.txt" \
     "${ground_truth_dir}/set1bin.test.prop.txt" &
@@ -206,7 +206,6 @@ for st in $sts; do
       	"${log_dir}/train.log0.txt" "${learn_dir}/gt_train_t${t}.dat" &
     done
     wait
-    rm -rf "${DATA_DIR}"
 
     echo 'Start learning'
     for model in pbm cpbm gt
