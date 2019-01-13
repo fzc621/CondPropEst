@@ -253,5 +253,7 @@ for st in $sts; do
       done
       wait
     done
+    
+    $python -m src.click_cnt "${log_dir}/train.log0.txt" > "${learn_dir}/log0.cnt"
   fi
 done
