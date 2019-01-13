@@ -15,7 +15,8 @@ if __name__ == '__main__':
     cnt = 0
     with open(args.log_path) as fin:
         for line in fin:
-            cnt += 1
+            if line[0] == '1':
+                cnt += 1
     print(cnt)
     end = timeit.default_timer()
     print('Running time: {:.3f}s.'.format(end - start))
