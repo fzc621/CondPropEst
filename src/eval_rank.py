@@ -8,6 +8,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 15})
 from .lib.data_utils import load_prop
 from .lib.utils import avg_rel_err, find_best_rel_model
 
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     metric_df.to_csv(os.path.join(args.data_dir, 'rank.csv'), float_format='%.6f')
 
     plt.figure()
-    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'], fmt='bx-')
+    plt.errorbar(columns, metric_df.loc['avg'], yerr=metric_df.loc['std'], fmt='bx-', linewidth=2)
     plt.xticks(columns, columns)
     plt.xlabel('Position')
     plt.ylabel('Relative Error')

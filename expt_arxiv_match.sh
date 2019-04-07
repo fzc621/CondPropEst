@@ -14,6 +14,8 @@ DATASET_DIR="../../dataset/arxiv"
 dim="1"
 max_rk="21"
 
+$python -m src.arxiv_match.check_cnt "${DATASET_DIR}/queries_multi_swap.tsv" "${DATASET_DIR}/queries_multi.tsv"
+exit
 # $python -m src.arxiv_match.split_data "${DATASET_DIR}/queries_multi.tsv" "${DATA_DIR}"
 
 # === Swap Intervention ===

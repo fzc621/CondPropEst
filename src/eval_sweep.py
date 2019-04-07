@@ -8,6 +8,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 15})
 from .lib.utils import read_err, find_best_rel_model, find_best_prop_model
 
 
@@ -67,9 +68,9 @@ if __name__ == '__main__':
     plt.figure()
     plt.xlabel('#Training queries')
     plt.ylabel('Relative Error')
-    plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.')
-    plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-')
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
+    plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.', linewidth=2)
+    plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-', linewidth=2)
+    # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
     plt.legend(frameon=False, markerfirst=False)
     plt.xticks(columns, num_columns)
     x0, x1, y0, y1 = plt.axis()

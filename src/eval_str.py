@@ -8,6 +8,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 15})
 from .lib.utils import read_err, find_best_rel_model, find_best_prop_model
 
 
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     # plt.errorbar(columns, pbm_metric_df.loc['avg'], label='PBM', yerr=pbm_metric_df.loc['std'], fmt='3-.')
     # plt.errorbar(columns, cpbm_metric_df.loc['avg'], label='CPBM', color='red', yerr=cpbm_metric_df.loc['std'], fmt='+-')
     # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
-    plt.errorbar(columns, imp_metric_df.loc['avg'], fmt='+-', ms=10)
+    plt.errorbar(columns, imp_metric_df.loc['avg'], fmt='+-', ms=10, linewidth=2)
     plt.xticks(columns, columns)
     x0, x1, y0, y1 = plt.axis()
     plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))

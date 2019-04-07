@@ -8,6 +8,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 15})
 from .lib.utils import read_err, find_best_rel_model, find_best_prop_model
 
 
@@ -67,14 +68,14 @@ if __name__ == '__main__':
     plt.figure()
     plt.xlabel('Strength of Context Dependence')
     plt.ylabel('Relative Error')
-    plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.')
-    plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-')
-    plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
+    plt.errorbar(columns, wo_metric_df.loc['avg'], label='PBM', yerr=wo_metric_df.loc['std'], fmt='3-.', linewidth=2)
+    plt.errorbar(columns, rel_metric_df.loc['avg'], label='CPBM', color='red', yerr=rel_metric_df.loc['std'], fmt='+-', linewidth=2)
+    # plt.errorbar(columns, mlp_metric_df.loc['avg'], label='CPBM w/o relevance model', color='green', yerr=mlp_metric_df.loc['std'], fmt='x--')
     plt.legend(frameon=False, loc='upper left')
     plt.xticks(columns, columns)
     x0, x1, y0, y1 = plt.axis()
     plt.axis((x0 - 0.2, x1 + 0.2, y0, y1))
-    plt.savefig(os.path.join(args.weight_dir, 'weight.eps'))
+    plt.savefig(os.path.join(args.weight_dir, 'ctx.eps'))
 
     end = timeit.default_timer()
     print('Runing time: {:.3f}s.'.format(end - start))
